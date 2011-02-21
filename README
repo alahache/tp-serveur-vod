@@ -1,2 +1,6 @@
-test
-yop
+----------------------------------------------------
+ Serveur VOD
+----------------------------------------------------
+
+	Projet C++ : Création d'un serveur de VOD
+gérant plusieurs protocoles, dont UDP, TCP.

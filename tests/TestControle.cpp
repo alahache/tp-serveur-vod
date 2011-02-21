@@ -20,7 +20,7 @@ using namespace std;
 #define BUFFER_SIZE 1024
 
 void setnonblocking(int fd)
-// Permet de manipuler de descripteur afin de le rendre non bloquant
+// Permet de modifier un descripteur afin de le rendre non bloquant
 {
 	int flags = fcntl(fd, F_GETFL, 0);
 	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
@@ -51,7 +51,7 @@ int main() {
 	struct sockaddr_in addr;
 		addr.sin_family = AF_INET;
 		addr.sin_addr.s_addr = htonl(INADDR_ANY);		// htonl : convertit un long vers le format réseau
-		addr.sin_port = htons(port);						// htons : convertit un short vers le format réseau
+		addr.sin_port = htons(port);					// htons : convertit un short vers le format réseau
 		
 	if(bind(s, (struct sockaddr *) &addr, sizeof(addr)) < 0)
 	{
@@ -106,6 +106,8 @@ int main() {
 		for(int i = 0; i < nfds; i++)
 		{
 			int fd = events[i].data.fd;
+			
+			// TODO : gérer entrée standard pour quitter le serveur proprement
 			
 			if(fd == s)
 			{
