@@ -179,7 +179,7 @@ int main() {
 						cout << "Lecture de " << received << " octets : " << buffer << endl;
 						
 						string message = buffer;
-						message.resize(message.length()-2);
+						message.resize(message.length()-2);	// Enlever CRLF
 						
 						if(message == "end" || message == "END" || message == "close" || message == "CLOSE")
 						{
