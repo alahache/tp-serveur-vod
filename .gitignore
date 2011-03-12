@@ -1,0 +1,7 @@
+# Fichier à ignorer
+
+#Ignorer les .o
+*.o
+
+#Ignorer l'exécutable du serveur
+serveur/serveur_vod
