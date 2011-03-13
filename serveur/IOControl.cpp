@@ -1,19 +1,18 @@
 /*************************************************************************
                            IOControl  -  description
                              -------------------
-    début                : ...
+    dÃ©but                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
-//---------- Réalisation de la classe <IOControl> (fichier IOControl.cpp) -------
+//---------- RÃ©alisation de la classe <IOControl> (fichier IOControl.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- Include système
+//-------------------------------------------------------- Include systÃ¨me
 using namespace std;
 #include <iostream>
 #include <cstdlib>
-#include <fcntl.h>
 
 //------------------------------------------------------ Include personnel
 #include "IOControl.h"
@@ -22,15 +21,17 @@ using namespace std;
 
 //----------------------------------------------------------------- PUBLIC
 
-//----------------------------------------------------- Méthodes publiques
+//----------------------------------------------------- MÃ©thodes publiques
 void IOControl::Run()
 {
+	if(running) return;
+
 	// On met en marche le gestionnaire :
 	running = true;
 	
 	while(running)
 	{
-		// On attends qu'un descripteur dans epfd veuille faire une opératon I/O :
+		// On attend qu'un descripteur dans epfd veuille faire une opÃ©raton I/O :
 		int nb_ready = epoll_wait(epfd, events, MAX_EPOLL_EVENTS_PER_RUN, EPOLL_RUN_TIMEOUT);
 		if (nb_ready < 0)
 		{
@@ -38,29 +39,28 @@ void IOControl::Run()
 			exit(EXIT_FAILURE);
 		}
 
-		// On parcoure les descripteurs prêts :
+		// On parcoure les descripteurs prÃªts :
 		for(int i = 0; i < nb_ready; i++)
 		{
 			int fd = events[i].data.fd;
 			
-			// On appelle l'action associée au descripteur :
-			actions[fd]->execute(events[i]);
+			// On appelle l'action associÃ©e au descripteur :
+			actions[fd]->Execute(events[i]);
 		}
 	}
-	
-} //----- Fin de Run
+}
 
 void IOControl::Stop()
 {
-	// On arrête le gestionnaire :
+	// On arrÃªte le gestionnaire :
 	running = false;
-} //----- Fin de Stop
+}
 
-void IOControl::AddAction(int fd, Action *action, unsigned int events)
+void IOControl::AddAction(int fd, Action *action, unsigned int epollEvents)
 {
-	// On surveille le descripteur <fd> sur les évenements <events> :
+	// On surveille le descripteur <fd> sur les Ã©venements <events> :
 	epoll_event ev;
-		ev.events = events;
+		ev.events = epollEvents;
 		ev.data.fd = fd;
 	if(epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) < 0)
 	{
@@ -70,7 +70,7 @@ void IOControl::AddAction(int fd, Action *action, unsigned int events)
 	
 	// On ajoute l'action <action> au dictionnaire :
 	actions[fd] = action;
-} //----- Fin de AddAction
+}
 
 void IOControl::RemoveAction(int fd)
 {
@@ -80,16 +80,16 @@ void IOControl::RemoveAction(int fd)
 		exit(EXIT_FAILURE);
 	}
 	
-	// On supprime l'action associée au descripteur du dictionnaire :
+	// On supprime l'action associÃ©e au descripteur du dictionnaire :
 	actions.erase(fd);
-} //----- Fin de RemoveAction
+}
 
 //-------------------------------------------- Constructeurs - destructeur
 
 
 IOControl::IOControl()
 {
-	// On crée le descripteur epfd gérant l'epoll :
+	// On crÃ©e le descripteur epfd gÃ©rant l'epoll :
 	epfd = epoll_create1(0);
 	if(epfd < 0)
 	{
@@ -98,22 +98,12 @@ IOControl::IOControl()
 	}
 	
 	running = false;
-} //----- Fin de IOControl
+}
 
 
 IOControl::~IOControl()
 {
 	close(epfd);
-} //----- Fin de ~IOControl
-
-
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées
-
-void setNonBlocking(int fd)
-{
-	int flags = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
+
 

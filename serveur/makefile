@@ -2,7 +2,7 @@ CC = g++
 EXEC_NAME = serveur_vod
 INCLUDES =
 LIBS =
-OBJ_FILES = IOControl.o Server.o
+OBJ_FILES = IOControl.o Server.o ActionConnection.o ActionClient.o ActionCommand.o
 OPT_CMP=-c
 OPT_EDL=-o
 

@@ -1,7 +1,7 @@
 /*************************************************************************
                            Action  -  description
                              -------------------
-    début                : 12/03/2011
+    dÃ©but                : 12/03/2011
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
@@ -9,7 +9,7 @@
 #if ! defined ( ACTION_H )
 #define ACTION_H
 
-//--------------------------------------------------- Interfaces utilisées
+//--------------------------------------------------- Interfaces utilisÃ©es
 #include <sys/epoll.h>
 
 //------------------------------------------------------------- Constantes 
@@ -17,11 +17,11 @@
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <Action>
-//	- Interface de handler d'évènement d'entrée / sortie.
-//	- Une action est déclenchée lorsque son descripteur associé veut
-//	  effectuer une opération de lecture / écriture. Dans ce cas, la
-//	  méthode execute() est appelée
+// RÃ´le de la classe <Action>
+//	- Interface de handler d'Ã©vÃ¨nement d'entrÃ©e / sortie.
+//	- Une action est dÃ©clenchÃ©e lorsque son descripteur associÃ© veut
+//	  effectuer une opÃ©ration de lecture / Ã©criture. Dans ce cas, la
+//	  mÃ©thode execute() est appelÃ©e
 //------------------------------------------------------------------------ 
 
 class Action
@@ -29,15 +29,15 @@ class Action
 //----------------------------------------------------------------- PUBLIC
 
 public:
-//----------------------------------------------------- Méthodes publiques
-    virtual void execute(epoll_event event) = 0;
+//----------------------------------------------------- MÃ©thodes publiques
+    virtual void Execute(epoll_event event) = 0;
     // Mode d'emploi :
-    //	<event>	: Évenement déclencheur de l'action
+    //	<event>	: Ã‰venement dÃ©clencheur de l'action
     //	
-    //	- Méthode virtuelle pure appelée lorsqu'un évenement agit sur
-    //	  un descripteur associé à l'action.
+    //	- MÃ©thode virtuelle pure appelÃ©e lorsqu'un Ã©venement agit sur
+    //	  un descripteur associÃ© Ã  l'action.
     // Contrat :
-    //	- Méthode à redéfinir
+    //	- MÃ©thode Ã  redÃ©finir
 
 };
 
