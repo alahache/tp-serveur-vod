@@ -11,7 +11,9 @@
 
 //--------------------------------------------------- Interfaces utilisées
 #include "Action.h"
+#include "ActionConnection.h"
 #include "IOControl.h"
+#include "Stream.h"
 
 //------------------------------------------------------------- Constantes
 const unsigned int BUFFER_SIZE = 100;
@@ -31,30 +33,34 @@ public:
     // Mode d'emploi :
     //	<event>	: Évenement déclencheur de l'action
     //	
-    //	- Méthode redéfinie appelée lorsqu'un évenement agit sur
-    //	  le socket de connexion du client.
+    //	- Méthode redéfinie appelée lorsqu'un client effectue une
+    //	  opération de lecture / écriture sur le descripteur <fd>.
+    
+    void Disconnect();
+	// Mode d'emploi :
+	//	- Permet de déconnecter un client du serveur.
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    ActionClient(IOControl& _io)
-    	: io(_io) { }
+    ActionClient(IOControl& _io, ActionConnection& _connection, Stream& _stream, int _fd)
+    	: Action(_io), connection(_connection), stream(_stream), fd(_fd) { }
     // Mode d'emploi :
     //	<_io>			: Gestionnaire d'e/s
+    //	<_connection>	: Action gérant la connexion des clients
+    //	<_stream>		: Flux associé à la connexion
+    //	<_fd>			: Descripteur de la connexion du client
     //
-    //	- Contructeur de ActionConnection
+    //	- Construit une nouvelle instance de ActionClient.
 
 //------------------------------------------------------------------ PRIVE 
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-	void disconnect(int fd);
-	// Mode d'emploi :
-	//	<fd>	: descripteur du client
-	//
-	//	- Permet de déconnecter un client <fd> du serveur
 
 //----------------------------------------------------- Attributs protégés
-	IOControl& io;
+	ActionConnection& connection;	// Action de connexion des clients
+	Stream& stream;					// Flux associé à la connexion
+	int fd;							// Descripteur de la connexion du client
 
 };
 

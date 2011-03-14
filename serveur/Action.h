@@ -30,15 +30,32 @@ class Action
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    virtual void Execute(epoll_event event) = 0;
-    // Mode d'emploi :
-    //	<event>	: Évenement déclencheur de l'action
-    //	
-    //	- Méthode virtuelle pure appelée lorsqu'un évenement agit sur
-    //	  un descripteur associé à l'action.
-    // Contrat :
-    //	- Méthode à redéfinir
+	virtual void Execute(epoll_event event) = 0;
+	// Mode d'emploi :
+	//	<event>	: Évenement déclencheur de l'action
+	//	
+	//	- Méthode virtuelle pure appelée lorsqu'un évenement agit sur
+	//	  un descripteur associé à l'action.
+	// Contrat :
+	//	- Méthode à redéfinir
 
+//-------------------------------------------- Constructeurs - destructeur
+
+    Action(IOControl& _io)
+    	: io(_io) { }
+    // Mode d'emploi :
+    //	<_io>			: Gestionnaire d'e/s
+    //
+    //	- Contructeur de Action
+
+//------------------------------------------------------------------ PRIVE 
+
+protected:
+//----------------------------------------------------- Méthodes protégées
+
+//----------------------------------------------------- Attributs protégés
+	IOControl& io;
+	
 };
 
 #endif // ACTION_H

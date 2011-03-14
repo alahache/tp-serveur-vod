@@ -10,12 +10,18 @@
 #define ACTIONCONNECTION_H
 
 //--------------------------------------------------- Interfaces utilisées
+#include <vector>
 #include "Action.h"
 #include "IOControl.h"
+#include "Stream.h"
 
 //------------------------------------------------------------------------ 
 // Rôle de la classe <ActionConnection>
-//	- Action lancée lorsqu'un client veut se connecter au serveur
+//	- Action lancée lorsqu'un client lance une nouvelle connexion TCP/IP
+//	  sur le serveur VOD.
+//	- Une nouvelle instance de ActionClient est alors
+//	  créée pour permettre la communication entre le ce dernier et le
+//	  serveur.
 //------------------------------------------------------------------------ 
 
 class ActionConnection : public Action
@@ -24,22 +30,33 @@ class ActionConnection : public Action
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    void Execute(epoll_event event);
-    // Mode d'emploi :
-    //	<event>	: Évenement déclencheur de l'action
-    //	
-    //	- Méthode redéfinie appelée lorsqu'un évenement agit sur
-    //	  la socket de connexion.
+	void Execute(epoll_event event);
+	// Mode d'emploi :
+	//	<event>		: Évenement déclencheur de l'action
+	//	
+	//	- Méthode redéfinie appelée lorsqu'un client veut se connecter
+	//	  sur le serveur
+
+	void RemoveClient(Action& client);
+	// Mode d'emploi :
+	//	<client>	: Client à supprimer
+	//	
+	//	- Permet de supprimer une action lorqu'un client se déconnecte
+	//	  du serveur afin de libérer de la mémoire.
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    ActionConnection(IOControl& _io, Action& _actionClient)
-    	: io(_io), actionClient(_actionClient) { }
-    // Mode d'emploi :
-    //	<_io>			: Gestionnaire d'e/s
-    //	<_actionClient>	: Action déclenchée lorsqu'un client se connecte
-    //
-    //	- Contructeur de ActionConnection
+	ActionConnection(IOControl& _io, Stream& _stream)
+		: Action(_io), stream(_stream) { }
+	// Mode d'emploi :
+	//	<_io>			: Gestionnaire d'e/s
+	//	<_stream>		: flux associé à la connexion
+	//
+	//	- Contructeur de ActionConnection
+	
+	virtual ~ActionConnection();
+	// Mode d'emploi :
+	//	- Destructeur de ActionConnection
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -54,8 +71,8 @@ protected:
 	//	  bloquant.
 
 //----------------------------------------------------- Attributs protégés
-	IOControl& io;
-	Action& actionClient;
+	std::vector<Action*> clients;	// Liste des clients connectés
+	Stream& stream					// Flux associé à la connexion
 
 };
 
