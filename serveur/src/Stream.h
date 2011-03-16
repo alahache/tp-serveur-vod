@@ -64,6 +64,9 @@ public:
 	Stream(IOControl& _io, int _port, Protocol _protocol, std::string _name, VideoType _type, float _ips);
 	// Mode d'emploi :
 	//	- Construit un nouveau flux
+	//	- Ouvre une nouvelle connexion de contrôle TCP/IP
+	//	- Ajoute une action pour gérer les connexions des clients
+	//	  au gestionnaire d'e/s
 
 	virtual ~Stream();
 	// Mode d'emploi :

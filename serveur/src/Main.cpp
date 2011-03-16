@@ -17,8 +17,13 @@ using namespace std;
 
 //---------------------------------------------------- PROGRAMME PRINCIPAL
 
-int main()
+int main(int argc, char* argv[])
 {
+	// TODO : 	récupérer éventuellement arguments
+	//			pour spécifier le fichier de
+	//			configuration.
+
+	// On lance simplement le serveur :
 	Server server;
 	
 	return 0;

@@ -17,6 +17,7 @@
 
 //------------------------------------------------------------- Constantes 
 const std::string DEFAULT_PATH_CONF = "config/server.conf";
+const int SIZE_BUFFER = 1024;
 
 //------------------------------------------------------------------ Types 
 
@@ -45,6 +46,10 @@ public:
 	//	- Surveille l'entrée standard pour y entrer des commandes
 	//	- Initialise le serveur HTTP
 	//	- Lance la boucle d'entrée / sortie IOControl
+	
+	virtual ~Server();
+	// Mode d'emploi :
+	//	- Destructeur du serveur
 
 //------------------------------------------------------------------ PRIVE 
 
@@ -59,7 +64,7 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 	std::string pathConf;				// Chemin vers le fichier de configuration
-	std::vector<Stream> catalogue;		// Catalogue des Flux vidéo
+	std::vector<Stream*> catalogue;		// Catalogue des Flux vidéo
 	IOControl io;						// Gestionnaire d'e/s
 	int HTTPPort;						// Port vers le serveur HTTP
 	// TODO serv HTTP
