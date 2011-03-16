@@ -67,7 +67,6 @@ void Stream::Close()
 Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, VideoType _type, float _ips)
 	: io(_io), port(_port), protocol(_protocol), name(_name), type(_type), ips(_ips)
 {
-	
 	// On crée une socket en TCP/IP pour écouter des clients sur ce flux :
 	s = socket(PF_INET, SOCK_STREAM, 0);
 	if(s < 0)

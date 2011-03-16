@@ -78,13 +78,13 @@ void Server::loadConfig()
 		
 		// On enlève les commentaires :
 		unsigned int posComment = line.find_first_of('%');
-		line = line.substr(0, posComment+1);
+		if(posComment != -1) line = line.substr(0, posComment+1);
 		
 		// On sépare la déclaration de la valeur :
-		unsigned int posSep = line.find_first_of('=');
+		int posSep = line.find_first_of('=');
 		if(posSep == -1) continue;
 		string name = line.substr(0, posSep);
-		string val	= line.substr(posSep);
+		string val	= line.substr(posSep+1);
 		stringstream ss(val);
 		
 		if(name == "httpport")
@@ -105,9 +105,9 @@ void Server::loadConfig()
 			while(ss >> prop)
 			{
 				// On sépare la déclaration de la valeur :
-				unsigned int propSep = line.find_first_of(':');
-				string propname = line.substr(0, posSep);
-				string propval	= line.substr(posSep);
+				unsigned int propSep = prop.find_first_of(':');
+				string propname = prop.substr(0, propSep);
+				string propval	= prop.substr(propSep+1);
 				
 				if(propname == "name")
 					name = propval;
@@ -136,6 +136,8 @@ void Server::loadConfig()
 			
 			Stream* stream = new Stream(io, port, protocol, name, type, ips);
 			catalogue.push_back(stream);
+			
+			prop.clear();
 		}
 	}
 }
