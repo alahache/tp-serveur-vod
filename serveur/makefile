@@ -2,7 +2,7 @@ CC=g++
 EXEC_NAME=serveur_vod
 INCLUDES=
 LIBS=
-OBJ_FILES=IOControl.o Server.o ActionConnection.o ActionClient.o ActionCommand.o
+OBJ_FILES=IOControl.o ActionConnection.o ActionClient.o ActionCommand.o Stream.o Server.o Main.o
 SRC_DIR=src/
 OPT_CMP=-c
 OPT_EDL=-o
@@ -17,6 +17,9 @@ clean:
 # Edition des liens :
 $(EXEC_NAME): $(OBJ_FILES)
 	$(CC) $(OPT_EDL) $(EXEC_NAME) $(OBJ_FILES) $(LIBS)
+	
+Main.o: $(SRC_DIR)Main.cpp
+	$(CC) $(OPT_CMP) $(INCLUDES) $(SRC_DIR)Main.cpp
 
 # Pattern de compilation des modules :
 %.o: $(SRC_DIR)%.cpp $(SRC_DIR)%.h

@@ -10,7 +10,7 @@
 #define ACTIONCONNECTION_H
 
 //--------------------------------------------------- Interfaces utilisées
-#include <vector>
+#include <list>
 #include "Action.h"
 #include "IOControl.h"
 #include "Stream.h"
@@ -71,8 +71,8 @@ protected:
 	//	  bloquant.
 
 //----------------------------------------------------- Attributs protégés
-	std::vector<Action*> clients;	// Liste des clients connectés
-	Stream& stream					// Flux associé à la connexion
+	std::list<Action*> clients;		// Liste des clients connectés
+	Stream& stream;					// Flux associé à la connexion
 
 };
 

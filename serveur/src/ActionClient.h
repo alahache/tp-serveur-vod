@@ -10,6 +10,8 @@
 #define ACTIONCLIENT_H
 
 //--------------------------------------------------- Interfaces utilisées
+#include <netinet/in.h>		// support IPv4
+
 #include "Action.h"
 #include "ActionConnection.h"
 #include "IOControl.h"
@@ -42,8 +44,8 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    ActionClient(IOControl& _io, ActionConnection& _connection, Stream& _stream, int _fd)
-    	: Action(_io), connection(_connection), stream(_stream), fd(_fd) { }
+    ActionClient(IOControl& _io, ActionConnection& _connection, Stream& _stream, int _fd, sockaddr_in _clientAddress)
+    	: Action(_io), connection(_connection), stream(_stream), fd(_fd), clientAddress(_clientAddress) { }
     // Mode d'emploi :
     //	<_io>			: Gestionnaire d'e/s
     //	<_connection>	: Action gérant la connexion des clients
@@ -59,6 +61,7 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 	ActionConnection& connection;	// Action de connexion des clients
+	sockaddr_in clientAddress;		// Adresse du client
 	Stream& stream;					// Flux associé à la connexion
 	int fd;							// Descripteur de la connexion du client
 	// TODO : ajouter pthread

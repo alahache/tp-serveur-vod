@@ -76,7 +76,7 @@ void ActionClient::Disconnect()
 	close(fd);
 	
 	// On supprime le client de l'action de connexion :
-	connection.Removeclient(this);
+	connection.RemoveClient(this);
 }
 
 //------------------------------------------------------------------ PRIVE

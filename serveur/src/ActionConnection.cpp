@@ -21,6 +21,7 @@ using namespace std;
 
 //------------------------------------------------------ Include personnel
 #include "ActionConnection.h"
+#include "ActionClient.h"
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -43,20 +44,20 @@ void ActionConnection::Execute(epoll_event event)
 	//cout << "[" << conn_sock << "] Nouveau client : " << inet_ntoa(client_addr.sin_addr) << endl;
 	
 	// On ajoute un nouveau client :
-	Action* actionClient = new ActionClient(io, stream, conn_sock);
+	Action* actionClient = new ActionClient(io, *this, stream, conn_sock, client_addr);
 	clients.push_back(actionClient);
 	
 	// On met le descripteur en "non bloquant" (cf. man epoll - EPOLLET) :
 	setNonBlocking(conn_sock);
 
 	// On ajoute le descripteur au gestionnaire d'e/s :
-	io.AddAction(conn_sock, &actionClient, EPOLLIN | EPOLLET);
+	io.AddAction(conn_sock, actionClient, EPOLLIN | EPOLLET);
 }
 
 void ActionConnection::RemoveClient(Action* client)
 {
 	// On supprime le client de la liste des clients connectés :
-	clients.erase(client);
+	clients.remove(client);
 	
 	// On détruit l'action associée au client :
 	delete client;
@@ -64,9 +65,9 @@ void ActionConnection::RemoveClient(Action* client)
 
 ActionConnection::~ActionConnection()
 {
-	for(int i=0; i<clients.size(); i++)
+	for(list<Action*>::iterator i=clients.begin(); i!=clients.end(); i++)
 	{
-		delete clients[i];
+		delete *i;
 	}
 }
 

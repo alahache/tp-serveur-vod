@@ -16,13 +16,12 @@ using namespace std;
 #include <sys/types.h>		// Pour plus de compatibilité
 #include <sys/socket.h>		// Sockets
 #include <sys/epoll.h>		// Gestion de multiples descripteurs (socket)
-#include <netinet/in.h>		// support IPv4
 #include <arpa/inet.h>		// inet_ntoa
+#include <sstream>			// string stream
 
 //------------------------------------------------------ Include personnel
 #include "Stream.h"
-
-//------------------------------------------------------------- Constantes
+#include "ActionConnection.h"
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -39,6 +38,8 @@ float Stream::GetIps()
 
 string Stream::GetImagePath(int i)
 {
+	stringstream oss;
+
 	// Selon le type de la vidéo, on récupère l'extension :
 	string ext;
 	switch(type)
@@ -51,7 +52,14 @@ string Stream::GetImagePath(int i)
 	}
 	
 	// Format : vidéos/nom_video/numero_image.EXT
-	return STREAM_DIRECTORY + name + "/" + i + ext;
+	oss << STREAM_DIRECTORY << name << "/" << i << ext;
+	return oss.str();
+}
+
+void Stream::Close()
+{
+	io.RemoveAction(s);
+	close(s);
 }
 
 //-------------------------------------------- Constructeurs - destructeur
@@ -61,7 +69,7 @@ Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, Vide
 {
 	
 	// On crée une socket en TCP/IP pour écouter des clients sur ce flux :
-	int s = socket(PF_INET, SOCK_STREAM, 0);
+	s = socket(PF_INET, SOCK_STREAM, 0);
 	if(s < 0)
 	{
 		cerr << "socket" << endl;
@@ -85,7 +93,7 @@ Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, Vide
 	}
 	
 	// On met en écoute la socket :
-	if(listen(s, NBMAX) < 0)
+	if(listen(s, NBMAX_CLIENTS) < 0)
 	{
 		cerr << "listen" << endl;
 		exit(EXIT_FAILURE);

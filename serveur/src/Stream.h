@@ -16,6 +16,7 @@
 
 //------------------------------------------------------------- Constantes
 const std::string STREAM_DIRECTORY = "videos/";
+const int NBMAX_CLIENTS = 100;
 
 //------------------------------------------------------------------ Types 
 enum VideoType { BMP, JPEG };
@@ -52,6 +53,11 @@ public:
 	//
 	//	- Retourne le chemin d'accès relatif à l'image numéro <i> de la
 	//	  vidéo du flux.
+	
+	void Close();
+	// Mode d'emploi :
+	//	- Arrête un flux: ferme la socket, supprime également l'action
+	//	  du gestionnaire d'e/s
 
 //-------------------------------------------- Constructeurs - destructeur
 
@@ -71,6 +77,7 @@ protected:
 //----------------------------------------------------- Attributs protégés
 	// Paramètres du serveur :
 	IOControl& io;				// Gestionnaire d'e/s
+	int s;						// Socket de connexion des clients
 	Action* connection;			// Action de connexion des clients
 	
 	// Paramètres de la vidéo :
