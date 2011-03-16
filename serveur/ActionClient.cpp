@@ -13,7 +13,7 @@
 using namespace std;
 #include <iostream>
 #include <string>
-#include <sys/socket.h>		// Sockets
+#include <sys/socket.h>
 
 //------------------------------------------------------ Include personnel
 #include "ActionClient.h"
@@ -29,7 +29,7 @@ void ActionClient::Execute(epoll_event event)
 	if(event.events & EPOLLHUP)
 	{
 		// DECONNEXION
-		disconnect(fd);
+		Disconnect();
 	}
 	else if(event.events & EPOLLERR)
 	{
@@ -55,25 +55,31 @@ void ActionClient::Execute(epoll_event event)
 			if(message == "end" || message == "END" || message == "close" || message == "CLOSE")
 			{
 				// DECONNEXION
-				disconnect(fd);
+				Disconnect();
 			}
 		}
 		else
 		{
 			// DECONNEXION
 			// Message nul ou < 0
-			disconnect(fd);
+			Disconnect();
 		}
 	}
+}
+
+void ActionClient::Disconnect()
+{
+	//cout << "[" << fd << "] Déconnexion du client" << endl;
+	
+	// On supprime le descipteur de la connexion :
+	io.RemoveAction(fd);
+	close(fd);
+	
+	// On supprime le client de l'action de connexion :
+	connection.Removeclient(this);
 }
 
 //------------------------------------------------------------------ PRIVE
 
 //----------------------------------------------------- Méthodes protégées
 
-void ActionClient::disconnect(int fd)
-{
-	//cout << "[" << fd << "] Déconnexion du client" << endl;
-	io.RemoveAction(fd);
-	close(fd);
-}

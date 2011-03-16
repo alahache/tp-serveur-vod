@@ -19,9 +19,7 @@
 
 //------------------------------------------------------------------------ 
 // Rôle de la classe <Server>
-//	- Serveur de gestion et de diffusion de flux vidéos en ligne. Cette
-//	  classe contient le programme principal permettant de lancer le
-//	  serveur en ligne de commande.
+//	- Serveur de gestion et de diffusion de flux vidéos en ligne.
 //	- 
 //------------------------------------------------------------------------ 
 

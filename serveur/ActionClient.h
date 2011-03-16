@@ -61,6 +61,7 @@ protected:
 	ActionConnection& connection;	// Action de connexion des clients
 	Stream& stream;					// Flux associé à la connexion
 	int fd;							// Descripteur de la connexion du client
+	// TODO : ajouter pthread
 
 };
 

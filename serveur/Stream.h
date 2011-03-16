@@ -55,8 +55,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	Stream(IOControl& _io)
-		: io(_io) { }
+	Stream(IOControl& _io, int _port, Protocol _protocol, std::string _name, VideoType _type, float _ips);
 	// Mode d'emploi :
 	//	- Construit un nouveau flux
 

@@ -37,7 +37,7 @@ public:
 	//	- Méthode redéfinie appelée lorsqu'un client veut se connecter
 	//	  sur le serveur
 
-	void RemoveClient(Action& client);
+	void RemoveClient(Action* client);
 	// Mode d'emploi :
 	//	<client>	: Client à supprimer
 	//	
