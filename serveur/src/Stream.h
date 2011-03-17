@@ -1,7 +1,7 @@
 /*************************************************************************
                            Stream  -  description
                              -------------------
-    début                : ...
+    dÃ©but                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
@@ -9,7 +9,7 @@
 #if ! defined ( STREAM_H )
 #define STREAM_H
 
-//--------------------------------------------------- Interfaces utilisées
+//--------------------------------------------------- Interfaces utilisÃ©es
 #include <string>
 #include "IOControl.h"
 #include "Action.h"
@@ -23,12 +23,12 @@ enum VideoType { BMP, JPEG };
 enum Protocol { TCP_PULL, TCP_PUSH, UDP_PULL, UDP_PUSH, MCAST_PUSH };
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <Stream>
-//	- Représente un flux vidéo à disposition du serveur. Un flux est
-//	  rattaché à un seul port dans le serveur, il permet de décrire une
-//	  vidéo et les méthodes permettant d'y accéder pour y récupérer les
+// RÃ´le de la classe <Stream>
+//	- ReprÃ©sente un flux vidÃ©o Ã  disposition du serveur. Un flux est
+//	  rattachÃ© Ã  un seul port dans le serveur, il permet de dÃ©crire une
+//	  vidÃ©o et les mÃ©thodes permettant d'y accÃ©der pour y rÃ©cupÃ©rer les
 //	  images.
-//	- Un flux est également rattaché à une connexion TCP/IP gérée par le
+//	- Un flux est Ã©galement rattachÃ© Ã  une connexion TCP/IP gÃ©rÃ©e par le
 //	  gestionnaire d'e/s IOControl. Les actions ActionConnection et
 //	  ActionClient utilisent ce flux.
 //------------------------------------------------------------------------ 
@@ -38,25 +38,25 @@ class Stream
 //----------------------------------------------------------------- PUBLIC
 
 public:
-//----------------------------------------------------- Méthodes publiques
+//----------------------------------------------------- MÃ©thodes publiques
 	VideoType GetType();
 	// Mode d'emploi :
-	//	- Retourne le type vidéo du flux
+	//	- Retourne le type vidÃ©o du flux
 	
 	float GetIps();
 	// Mode d'emploi :
-	//	- Retourne le nombre d'images par secondes de la vidéo
+	//	- Retourne le nombre d'images par secondes de la vidÃ©o
 	
 	std::string GetImagePath(int i);
 	// Mode d'emploi :
-	//	<i>		: position de l'image dans la vidéo
+	//	<i>		: position de l'image dans la vidÃ©o
 	//
-	//	- Retourne le chemin d'accès relatif à l'image numéro <i> de la
-	//	  vidéo du flux.
+	//	- Retourne le chemin d'accÃ¨s relatif Ã  l'image numÃ©ro <i> de la
+	//	  vidÃ©o du flux.
 	
 	void Close();
 	// Mode d'emploi :
-	//	- Arrête un flux: ferme la socket, supprime également l'action
+	//	- ArrÃªte un flux: ferme la socket, supprime Ã©galement l'action
 	//	  du gestionnaire d'e/s
 
 //-------------------------------------------- Constructeurs - destructeur
@@ -64,35 +64,35 @@ public:
 	Stream(IOControl& _io, int _port, Protocol _protocol, std::string _name, VideoType _type, float _ips);
 	// Mode d'emploi :
 	//	- Construit un nouveau flux
-	//	- Ouvre une nouvelle connexion de contrôle TCP/IP
-	//	- Ajoute une action pour gérer les connexions des clients
+	//	- Ouvre une nouvelle connexion de contrÃ´le TCP/IP
+	//	- Ajoute une action pour gÃ©rer les connexions des clients
 	//	  au gestionnaire d'e/s
 
 	virtual ~Stream();
 	// Mode d'emploi :
-	//	- Détruit un flux
+	//	- DÃ©truit un flux
 
 //------------------------------------------------------------------ PRIVE 
 
 protected:
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
 
-//----------------------------------------------------- Attributs protégés
-	// Paramètres du serveur :
+//----------------------------------------------------- Attributs protÃ©gÃ©s
+	// ParamÃ¨tres du serveur :
 	IOControl& io;				// Gestionnaire d'e/s
 	int s;						// Socket de connexion des clients
 	Action* connection;			// Action de connexion des clients
 	
-	// Paramètres de la vidéo :
-	int port;					// port utilisé par le flux
-	Protocol protocol;			// Protocole utilisé pour les échanges
-	std::string name;			// Nom de la vidéo
-	VideoType type;				// Type d'images de la vidéo
+	// ParamÃ¨tres de la vidÃ©o :
+	int port;					// port utilisÃ© par le flux
+	Protocol protocol;			// Protocole utilisÃ© pour les Ã©changes
+	std::string name;			// Nom de la vidÃ©o
+	VideoType type;				// Type d'images de la vidÃ©o
 	float ips;					// Nombre d'images par secondes
 
 };
 
-//--------------------------- Autres définitions dépendantes de <Stream>
+//--------------------------- Autres dÃ©finitions dÃ©pendantes de <Stream>
 
 #endif // STREAM_H
 

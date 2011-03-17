@@ -1,25 +1,31 @@
 /*************************************************************************
                            Server  -  description
                              -------------------
-    dÈbut                : ...
+    d√©but                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
-//---------- RÈalisation de la classe <Server> (fichier Server.cpp) -------
+//---------- R√©alisation de la classe <Server> (fichier Server.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- Include systËme
+//-------------------------------------------------------- Include syst√®me
 using namespace std;
 #include <iostream>
-#include <sys/epoll.h>
-#include <sstream>
-#include <cstdlib>
-#include <fstream>
+#include <sys/epoll.h>		// epoll
+#include <fstream>			// ifstream
+#include <sstream>			// stringstream
+#include <cstdlib>			// exit
+#include <sys/types.h>		// Pour plus de compatibilit√©
+#include <sys/socket.h>		// Sockets
+#include <sys/epoll.h>		// Gestion de multiples descripteurs (socket)
+#include <arpa/inet.h>		// inet_ntoa
 
 //------------------------------------------------------ Include personnel
 #include "Server.h"
 #include "ActionCommand.h"
+#include "ActionHTTPConnection.h"
+#include "ActionHTTPClient.h"
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -31,14 +37,20 @@ Server::Server(string _pathConf)
 	// ---------------------------------------------------------------------
 	// Initialisation du serveur :
 	// ---------------------------------------------------------------------
-
-	// On ajoute l'entrÈe standard dans le gestionnaire d'e/s :
+	
+	// On initialise tous les flux vid√©os √† partir du fichier de conf :
+	loadConfig();
+	
+	// On va initialiser le serveur HTTP :
+	int s = initHTTPServer();
+	ActionHTTPClient		action_http_client(io);
+	ActionHTTPConnection 	action_http_connection(io, action_http_client);
+	io.AddAction(s, &action_http_connection, EPOLLIN);
+	
+	// On ajoute l'entr√©e standard dans le gestionnaire d'e/s :
 	ActionCommand action_command(io);
 	io.AddAction(0, &action_command, EPOLLIN);
 	ActionCommand::DisplayPrompt();
-	
-	// On initialise tous les flux vidÈos ‡ partir du fichier de conf :
-	loadConfig();
 	
 	// ---------------------------------------------------------------------
 	// Boucle principale :
@@ -50,7 +62,15 @@ Server::Server(string _pathConf)
 	// Destruction :
 	// ---------------------------------------------------------------------
 	
+	// On va fermer tous les flux :
+	for(int i=0; i<catalogue.size(); i++)
+		catalogue[i]->Close();
+
+	// On d√©truit le serveur HTTP et l'entr√©e standard :
+	io.RemoveAction(s);	
 	io.RemoveAction(0);
+	close(s);
+	
 }
 
 Server::~Server()
@@ -61,7 +81,7 @@ Server::~Server()
 
 //------------------------------------------------------------------ PRIVE
 
-//----------------------------------------------------- MÈthodes protÈgÈes
+//----------------------------------------------------- M√©thodes prot√©g√©es
 
 void Server::loadConfig()
 {
@@ -69,18 +89,18 @@ void Server::loadConfig()
 	string line;
 	ifstream file(pathConf.c_str());
 	
-	// On rÈcupËre le contenu du fichier de conf ligne par ligne :
+	// On r√©cup√®re le contenu du fichier de conf ligne par ligne :
 	while(!file.eof())
 	{
-		// On rÈcupËre la ligne courante :
+		// On r√©cup√®re la ligne courante :
 		file.getline(buffer, sizeof(buffer));
 		line = buffer;
 		
-		// On enlËve les commentaires :
+		// On enl√®ve les commentaires :
 		unsigned int posComment = line.find_first_of('%');
 		if(posComment != -1) line = line.substr(0, posComment+1);
 		
-		// On sÈpare la dÈclaration de la valeur :
+		// On s√©pare la d√©claration de la valeur :
 		int posSep = line.find_first_of('=');
 		if(posSep == -1) continue;
 		string name = line.substr(0, posSep);
@@ -94,7 +114,7 @@ void Server::loadConfig()
 		}
 		else if(name == "video")
 		{
-			// On va crÈer un nouveau flux vidÈo :
+			// On va cr√©er un nouveau flux vid√©o :
 			int port;
 			Protocol protocol;
 			string name;
@@ -104,7 +124,7 @@ void Server::loadConfig()
 			string prop;
 			while(ss >> prop)
 			{
-				// On sÈpare la dÈclaration de la valeur :
+				// On s√©pare la d√©claration de la valeur :
 				unsigned int propSep = prop.find_first_of(':');
 				string propname = prop.substr(0, propSep);
 				string propval	= prop.substr(propSep+1);
@@ -140,4 +160,40 @@ void Server::loadConfig()
 			prop.clear();
 		}
 	}
+}
+
+int Server::initHTTPServer()
+{
+	// On va cr√©er la socket s :
+	int s = socket(PF_INET, SOCK_STREAM, 0);
+	if(s < 0)
+	{
+		cerr << "socket" << endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	// On contourne le probleme de l'adresse et du port d√©j√† utilis√©s :
+	int opt=1;
+	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	
+	// On attache le port √† la socket :
+	struct sockaddr_in addr;
+		addr.sin_family = AF_INET;
+		addr.sin_addr.s_addr = htonl(INADDR_ANY);		// htonl : convertit un long vers le format r√©seau
+		addr.sin_port = htons(HTTPPort);				// htons : convertit un short vers le format r√©seau
+		
+	if(bind(s, (struct sockaddr *) &addr, sizeof(addr)) < 0)
+	{
+		cerr << "bind" << endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	// On met en √©coute la socket :
+	if(listen(s, NBMAX_CLIENTS_HTTP) < 0)
+	{
+		cerr << "listen" << endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	return s;
 }

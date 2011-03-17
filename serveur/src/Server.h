@@ -1,7 +1,7 @@
 /*************************************************************************
                            Server  -  description
                              -------------------
-    dÈbut                : ...
+    d√©but                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
@@ -9,7 +9,7 @@
 #if ! defined ( SERVER_H )
 #define SERVER_H
 
-//--------------------------------------------------- Interfaces utilisÈes
+//--------------------------------------------------- Interfaces utilis√©es
 #include "IOControl.h"
 #include "Stream.h"
 #include <vector>
@@ -18,12 +18,13 @@
 //------------------------------------------------------------- Constantes 
 const std::string DEFAULT_PATH_CONF = "config/server.conf";
 const int SIZE_BUFFER = 1024;
+const unsigned int NBMAX_CLIENTS_HTTP = 1000;
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// RÙle de la classe <Server>
-//	- Serveur de gestion et de diffusion de flux vidÈos en ligne.
+// R√¥le de la classe <Server>
+//	- Serveur de gestion et de diffusion de flux vid√©os en ligne.
 //
 //
 //
@@ -34,7 +35,7 @@ class Server
 //----------------------------------------------------------------- PUBLIC
 
 public:
-//----------------------------------------------------- MÈthodes publiques
+//----------------------------------------------------- M√©thodes publiques
 
 //-------------------------------------------- Constructeurs - destructeur
 
@@ -43,9 +44,9 @@ public:
 	//	- Constructeur du serveur
 	//	- Permet d'initialiser tous les flux ainsi que toutes les
 	//	  connexions.
-	//	- Surveille l'entrÈe standard pour y entrer des commandes
+	//	- Surveille l'entr√©e standard pour y entrer des commandes
 	//	- Initialise le serveur HTTP
-	//	- Lance la boucle d'entrÈe / sortie IOControl
+	//	- Lance la boucle d'entr√©e / sortie IOControl
 	
 	virtual ~Server();
 	// Mode d'emploi :
@@ -54,20 +55,28 @@ public:
 //------------------------------------------------------------------ PRIVE 
 
 protected:
-//----------------------------------------------------- MÈthodes protÈgÈes
+//----------------------------------------------------- M√©thodes prot√©g√©es
 
 	void loadConfig();
 	// Mode d'emploi :
 	//	- Permet de lire le fichier de configuration pour y extraire
-	//	  Le port du serveur, ainsi que les flux associÈs et toutes
-	//	  leurs caractÈristiques.
+	//	  Le port du serveur, ainsi que les flux associ√©s et toutes
+	//	  leurs caract√©ristiques.
+	
+	int initHTTPServer();
+	// Mode d'emploi :
+	//	- Permet d'initialiser le serveur HTTP avec le port HTTPPort
+	//	- Retourne une nouvelle socket pr√™te √† recevoir de nouvelles
+	//	  connexions.
+	// Contrat :
+	//	- Le port HTTPPort a d√©j√† √©t√© d√©fini 
 
-//----------------------------------------------------- Attributs protÈgÈs
+//----------------------------------------------------- Attributs prot√©g√©s
 	std::string pathConf;				// Chemin vers le fichier de configuration
-	std::vector<Stream*> catalogue;		// Catalogue des Flux vidÈo
+	std::vector<Stream*> catalogue;		// Catalogue des Flux vid√©o
 	IOControl io;						// Gestionnaire d'e/s
 	int HTTPPort;						// Port vers le serveur HTTP
-	// TODO serv HTTP
+
 };
 
 #endif // SERVER_H
