@@ -43,8 +43,12 @@ void ActionHTTPConnection::Execute(epoll_event event)
 	
 	//cout << "[" << conn_sock << "] Nouveau client : " << inet_ntoa(client_addr.sin_addr) << endl;
 	
-	// On met le descripteur en "non bloquant" (cf. man epoll - EPOLLET) :
-	setNonBlocking(conn_sock);
+	// /!\	- Attention : Pour plus de performances, on pourra décommenter la ligne
+	//		  suivante et ajouter l'évenement EPOLLOUT pour envoyer les réponses
+	//		  HTTP en plusieurs fois si le fichier est trop gros.
+	//		- Pour plus de simplicité, on va simplement envoyer le fichier en
+	//		  une seule fois en supposant que ce dernier ne soit pas trop gros.
+	//setNonBlocking(conn_sock);
 
 	// On ajoute le descripteur au gestionnaire d'e/s :
 	io.AddAction(conn_sock, &actionClient, EPOLLIN | EPOLLET);

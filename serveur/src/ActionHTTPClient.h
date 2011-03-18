@@ -14,6 +14,7 @@
 #include <string>
 
 #include "Action.h"
+#include "ActionHTTPConnection.h"
 #include "IOControl.h"
 
 //------------------------------------------------------------- Constantes
@@ -57,9 +58,10 @@ public:
 protected:
 //----------------------------------------------------- Méthodes protégées
 
-	int readFile(string filename, char*& buffer, string& type);
+	long readFile(string filename, char*& buffer, string& type);
 
 //----------------------------------------------------- Attributs protégés
+
 };
 
 #endif // ACTIONHTTPCLIENT_H

@@ -17,6 +17,7 @@ using namespace std;
 #include <sys/socket.h>
 #include <ctime>
 #include <cstring>
+#include <errno.h>
 
 //------------------------------------------------------ Include personnel
 #include "ActionHTTPClient.h"
@@ -85,11 +86,11 @@ void ActionHTTPClient::Execute(epoll_event event)
 			
 			// On récupère le contenu du fichier :
 			char *filebuffer;
-			int filelength = readFile(filename, filebuffer, type);
+			long filelength = readFile(filename, filebuffer, type);
 			if(filelength != -1)
 			{
 			
-				// On envoie la réponse :
+				// On construit le header de la réponse :
 				stringstream header;
 				header << "HTTP/1.1 200 OK" << CRLF;
 				header << "Server: VODServer (Linux)" << CRLF;
@@ -100,24 +101,30 @@ void ActionHTTPClient::Execute(epoll_event event)
 				header << CRLF;
 				string str_header = header.str();
 				
-				int responselength = filelength + str_header.size();
+				// Assembage header + contenu fichier :
+				long responselength = filelength + str_header.size();
 				char* response = new char[responselength];
-				strcpy(response, str_header.c_str());
-				strcat(response, filebuffer);
+				memcpy(response, str_header.c_str(), str_header.size());
+				memcpy(response + str_header.size(), filebuffer, filelength);
 				
-				cout << responselength << endl;
-			
-				int sent = send(fd, response, responselength, 0);
-				if(sent < 0)
+				// On envoie la réponse en une seule fois :
+				// /!\ 	Attention : cet envoi peut ralentir les performances du serveur
+				//		si le fichier envoyé est trop gros : L'exécution bloque tant
+				//		que le fichier entier n'a pas été envoyé.
+				long total_sent = 0;
+				while(total_sent < responselength)
 				{
-					cerr << "[" << fd << "] Erreur envoi de données (send)" << endl;
+					long sent = send(fd, response, responselength, 0);
+					if(sent == -1)
+					{
+						cerr << "[" << fd << "] Erreur envoi de données (send)" << endl;
+						cerr << strerror(errno) << endl;
+						break;
+					}
+					total_sent += sent;
 				}
 				
-				cout << sent << endl;
-				
-				cout << "yep1" << endl;
-				//delete[] response;			// TODO : debug this shit
-				cout << "yep2" << endl;
+				delete[] response;
 				delete[] filebuffer;
 			}
 			
@@ -146,7 +153,7 @@ void ActionHTTPClient::Disconnect(int fd)
 
 //----------------------------------------------------- Méthodes protégées
 
-int ActionHTTPClient::readFile(string filename, char*& filebuffer, string& type)
+long ActionHTTPClient::readFile(string filename, char*& filebuffer, string& type)
 {	
 	// On va tenter de récupérer le contenu de ce fichier :
 	ifstream fs(filename.c_str());
@@ -164,7 +171,7 @@ int ActionHTTPClient::readFile(string filename, char*& filebuffer, string& type)
 	{
 		// On récupère la taille du fichier :
 		fs.seekg(0, ios::end);
-		int length = fs.tellg();
+		long length = fs.tellg();
 		fs.seekg(0, ios::beg);
 
 		// On alloue la mémoire :

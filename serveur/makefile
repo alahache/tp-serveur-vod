@@ -4,7 +4,7 @@ INCLUDES=
 LIBS=
 OBJ_FILES=IOControl.o ActionConnection.o ActionClient.o ActionCommand.o Stream.o ActionHTTPConnection.o ActionHTTPClient.o Server.o Main.o
 SRC_DIR=src/
-OPT_CMP=-c
+OPT_CMP=-c -ggdb
 OPT_EDL=-o
 
 # Lancement de la chaîne de compilation :
