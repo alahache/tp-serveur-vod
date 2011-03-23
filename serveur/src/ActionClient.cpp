@@ -24,8 +24,8 @@ using namespace std;
 //----------------------------------------------------- Méthodes publiques
 void ActionClient::Execute(epoll_event event)
 {
+
 	char buffer[BUFFER_SIZE];
-	int fd = event.data.fd;
 	
 	if(event.events & EPOLLHUP)
 	{
@@ -51,18 +51,21 @@ void ActionClient::Execute(epoll_event event)
 			//cout << "[" << fd << "] Lecture de " << received << " octets : " << buffer << endl;
 			
 			stringstream message(buffer);
-			string line, command;
-			while(getline(message, line))		// Enlève LF
+			string line;
+			while(getline(message, line))	// Enlève LF
 			{
+			
 				if(line.empty()) continue;		// Lignes vides
-				line.resize(command.size()-1);	// Enlever CR
+				line.resize(line.size()-1);		// Enlever CR
 				stringstream sline(line);
+				string command;
 				sline >> command;
 				
 				if(!transfertStarted)
 				{
 					// DEBUT DU TRANSFERT
 				
+					bool beginTransfert = false;
 					if(command == "get" || command == "GET")
 					{
 						sline >> videoId;
@@ -70,17 +73,21 @@ void ActionClient::Execute(epoll_event event)
 					else if(command == "fragment_size" || command == "FRAGMENT_SIZE")
 					{
 						sline >> fragmentSize;
-						transfertStarted = true;
+						beginTransfert = true;
+						cout << "test fg" << endl;
 					}
 					else if(command == "listen_port" || command == "LISTEN_PORT")
 					{
 						sline >> listenPort;
 						if(stream.GetProtocol() == TCP_PULL || stream.GetProtocol() == TCP_PUSH)
-							transfertStarted = true;
+						{	
+							beginTransfert = true;
+						}
+						cout << "test listen" << endl;
 					}
 					
 					// On va créer le transfert
-					if(transfertStarted)
+					if(beginTransfert)
 					{
 						if(stream.GetProtocol() == TCP_PUSH)
 						{
@@ -102,7 +109,10 @@ void ActionClient::Execute(epoll_event event)
 						// TODO : créer pipe
 						
 						// TODO : créer thread
+						
+						transfertStarted = true;
 					}
+					
 				} // -- début du transfert
 				else
 				{
@@ -111,8 +121,11 @@ void ActionClient::Execute(epoll_event event)
 					if(command == "end" || command == "END" || command == "close" || command == "CLOSE")
 					{
 						// DECONNEXION
+						// TODO envoyer commmand au pipe
+						// TODO attendre fin thread
 						Disconnect();
 					}
+					
 					else if(stream.GetProtocol() == TCP_PULL || stream.GetProtocol() == UDP_PULL)
 					{
 						// PROTOCOLE PULL
@@ -121,6 +134,7 @@ void ActionClient::Execute(epoll_event event)
 						{
 							int image_id;
 							sline >> image_id;
+							
 							// TODO envoyer image_id au pipe
 						}
 						
@@ -148,8 +162,12 @@ void ActionClient::Execute(epoll_event event)
 						}
 						
 					} // -- commande push
+					
 				} // -- transfert en cours
+				
+				line.clear();
 			} // -- ligne
+			
 		} // -- message
 		else
 		{
@@ -157,13 +175,14 @@ void ActionClient::Execute(epoll_event event)
 			// Message nul ou < 0
 			Disconnect();
 		}
+		
 	}
 }
 
 void ActionClient::Disconnect()
 {
 	//cout << "[" << fd << "] Déconnexion du client" << endl;
-	
+
 	// On supprime le descipteur de la connexion :
 	io.RemoveAction(fd);
 	close(fd);
@@ -171,6 +190,7 @@ void ActionClient::Disconnect()
 	// On supprime le client de l'action de connexion :
 	connection.RemoveClient(this);
 }
+
 
 //------------------------------------------------------------------ PRIVE
 

@@ -10,7 +10,8 @@
 #define ACTIONCLIENT_H
 
 //--------------------------------------------------- Interfaces utilisées
-#include <netinet/in.h>		// support IPv4
+//#include <netinet/in.h>		// support IPv4
+#include <arpa/inet.h>
 
 #include "Action.h"
 #include "ActionConnection.h"
@@ -45,7 +46,7 @@ public:
 //-------------------------------------------- Constructeurs - destructeur
 
     ActionClient(IOControl& _io, ActionConnection& _connection, Stream& _stream, int _fd, sockaddr_in _clientAddress)
-    	: Action(_io), connection(_connection), stream(_stream), fd(_fd), clientAddress(_clientAddress), transfertStarted(false) { }
+    	: Action(_io), connection(_connection), stream(_stream), fd(_fd), clientAddress(_clientAddress), transfertStarted(false) {}
     // Mode d'emploi :
     //	<_io>			: Gestionnaire d'e/s
     //	<_connection>	: Action gérant la connexion des clients
@@ -60,15 +61,14 @@ protected:
 //----------------------------------------------------- Méthodes protégées
 
 //----------------------------------------------------- Attributs protégés
+	bool transfertStarted;			// Vrai si le transfert a commencé
 	ActionConnection& connection;	// Action de connexion des clients
-	sockaddr_in clientAddress;		// Adresse du client
 	Stream& stream;					// Flux associé à la connexion
 	int fd;							// Descripteur de la connexion du client
-	bool transfertStarted;			// Vrai si le transfert a commencé
 	int videoId;					// ID de la vidéo à envoyer
 	unsigned long fragmentSize;		// Taille du fragment pour un transfert UDP
 	unsigned int listenPort;		// Port utilisé
-	// TODO : ajouter pthread
+	sockaddr_in clientAddress;		// Adresse du client
 
 };
 
