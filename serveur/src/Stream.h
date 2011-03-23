@@ -43,6 +43,10 @@ public:
 	// Mode d'emploi :
 	//	- Retourne le type vidéo du flux
 	
+	Protocol GetProtocol();
+	// Mode d'emploi :
+	//	- Retourne le protocole du flux
+	
 	float GetIps();
 	// Mode d'emploi :
 	//	- Retourne le nombre d'images par secondes de la vidéo
@@ -79,16 +83,16 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 	// Paramètres du serveur :
-	IOControl& io;				// Gestionnaire d'e/s
-	int s;						// Socket de connexion des clients
-	Action* connection;			// Action de connexion des clients
+	IOControl& io;					// Gestionnaire d'e/s
+	int s;							// Socket de connexion des clients
+	Action* connection;				// Action de connexion des clients
 	
 	// Paramètres de la vidéo :
-	int port;					// port utilisé par le flux
-	Protocol protocol;			// Protocole utilisé pour les échanges
-	std::string name;			// Nom de la vidéo
-	VideoType type;				// Type d'images de la vidéo
-	float ips;					// Nombre d'images par secondes
+	int port;						// port utilisé par le flux
+	Protocol protocol;				// Protocole utilisé pour les échanges
+	std::string name;				// Nom de la vidéo
+	VideoType type;					// Type d'images de la vidéo
+	float ips;						// Nombre d'images par secondes
 
 };
 

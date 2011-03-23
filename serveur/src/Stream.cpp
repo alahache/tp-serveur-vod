@@ -31,6 +31,11 @@ VideoType Stream::GetType()
 	return type;
 }
 
+Protocol Stream::GetProtocol()
+{
+	return protocol;
+}
+
 float Stream::GetIps()
 {
 	return ips;

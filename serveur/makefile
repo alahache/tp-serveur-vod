@@ -11,8 +11,12 @@ OPT_EDL=-o
 all: $(EXEC_NAME)
 
 # Nettoyage des fichiers .o ainsi que de l'exécutable :
+mrproper: clean
+	rm $(EXEC_NAME)
+
+# Nettoyage des fichiers .o :
 clean:
-	rm $(EXEC_NAME) $(OBJ_FILES)
+	rm $(OBJ_FILES)
 
 # Edition des liens :
 $(EXEC_NAME): $(OBJ_FILES)
