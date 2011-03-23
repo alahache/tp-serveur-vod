@@ -1,15 +1,15 @@
 /*************************************************************************
                            DataTransfertTCP  -  description
                              -------------------
-    début                : Mars 2011
-    copyright            : (C) 2011 par Pierre LULÉ
+    dÃ©but                : Mars 2011
+    copyright            : (C) 2011 par Pierre LULÃ‰
 *************************************************************************/
 
-//---------- Réalisation de la classe <DataTransfertTCP> (fichier DataTransfertTCP.cpp) -------
+//---------- RÃ©alisation de la classe <DataTransfertTCP> (fichier DataTransfertTCP.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- Include système
+//-------------------------------------------------------- Include systÃ¨me
 using namespace std;
 #include <iostream>
 
@@ -20,12 +20,12 @@ using namespace std;
 
 //----------------------------------------------------------------- PUBLIC
 
-//----------------------------------------------------- Méthodes publiques
+//----------------------------------------------------- MÃ©thodes publiques
 
 
 //------------------------------------------------------------------ PRIVE
 
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
 
 void DataTransfertTCP::connect()
 {
@@ -66,7 +66,7 @@ void DataTransfertTCP::send(int id)
             msg_stream << length << CRLF;
             msg_stream << fs;
 
-            // Préparation du message
+            // PrÃ©paration du message
             long msg_size = msg.size();
             char* msg = new char[msg_size];
             memcpy(msg, msg_stream.c_str(), msg_size);
@@ -78,7 +78,7 @@ void DataTransfertTCP::send(int id)
                 long sent = send(sock, msg, msg_size, 0);
                 if(sent == -1)
                 {
-                    cerr << "[" fd << "] Erreur envoi de données (send)" << endl;
+                    cerr << "[" fd << "] Erreur envoi de donnÃ©es (send)" << endl;
                     cerr << strerror(errno) << endl;
                     break;
                 }

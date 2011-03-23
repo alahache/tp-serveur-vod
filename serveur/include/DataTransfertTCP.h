@@ -1,15 +1,15 @@
 /*************************************************************************
                            DataTransfertTCP  -  description
                              -------------------
-    début                : Mars 2011
-    copyright            : (C) 2011 par Pierre LULÉ
+    dÃ©but                : Mars 2011
+    copyright            : (C) 2011 par Pierre LULÃ‰
 *************************************************************************/
 
 //---------- Interface de la classe <DataTransfertTCP> (fichier DataTransfertTCP.h) ------
 #if ! defined ( DATATRANSFERTTCP_H )
 #define DATATRANSFERTTCP_H
 
-//--------------------------------------------------- Interfaces utilisées
+//--------------------------------------------------- Interfaces utilisÃ©es
 #include "DataTransfert.h"
 
 //------------------------------------------------------------- Constantes 
@@ -18,8 +18,8 @@ const int BUFFER_SIZE = 1024;
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <DataTransfertTCP>
-// Implémentation de DataTransfert pour TCP
+// RÃ´le de la classe <DataTransfertTCP>
+// ImplÃ©mentation de DataTransfert pour TCP
 //
 //------------------------------------------------------------------------ 
 
@@ -28,11 +28,11 @@ class DataTransfertTCP : public DataTransfert
 //----------------------------------------------------------------- PUBLIC
 
 public:
-//----------------------------------------------------- Méthodes publiques
+//----------------------------------------------------- MÃ©thodes publiques
 
     virtual void Begin() = 0;
     
-//------------------------------------------------- Surcharge d'opérateurs
+//------------------------------------------------- Surcharge d'opÃ©rateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
@@ -42,17 +42,17 @@ public:
 //------------------------------------------------------------------ PRIVE 
 
 protected:
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
 
 	void connect();
 	void send(int imageId);
 	void disconnect();
 
-//----------------------------------------------------- Attributs protégés
+//----------------------------------------------------- Attributs protÃ©gÃ©s
 
 };
 
-//--------------------------- Autres définitions dépendantes de <DataTransfertTCP>
+//--------------------------- Autres dÃ©finitions dÃ©pendantes de <DataTransfertTCP>
 
 #endif // DATATRANSFERTTCP_H
 

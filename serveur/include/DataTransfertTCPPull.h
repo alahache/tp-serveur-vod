@@ -1,22 +1,22 @@
 /*************************************************************************
                            DataTransfertTCPPull  -  description
                              -------------------
-    début                : ...
-    copyright            : (C) 2011 par Pierre LULÉ
+    dÃ©but                : ...
+    copyright            : (C) 2011 par Pierre LULÃ‰
 *************************************************************************/
 
 //---------- Interface de la classe <DataTransfertTCPPull> (fichier DataTransfertTCPPull.h) ------
 #if ! defined ( DATATRANSFERTTCPPULL_H )
 #define DATATRANSFERTTCPPULL_H
 
-//--------------------------------------------------- Interfaces utilisées
+//--------------------------------------------------- Interfaces utilisÃ©es
 #include "DataTransfertTCP.h"
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <DataTransfertTCPPull>
+// RÃ´le de la classe <DataTransfertTCPPull>
 //
 //
 //------------------------------------------------------------------------ 
@@ -26,11 +26,11 @@ class DataTransfertTCPPull : public DataTransfertTCP
 //----------------------------------------------------------------- PUBLIC
 
 public:
-//----------------------------------------------------- Méthodes publiques
+//----------------------------------------------------- MÃ©thodes publiques
     
     void Begin();
 
-//------------------------------------------------- Surcharge d'opérateurs
+//------------------------------------------------- Surcharge d'opÃ©rateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
@@ -50,13 +50,13 @@ public:
 //------------------------------------------------------------------ PRIVE 
 
 protected:
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
 
-//----------------------------------------------------- Attributs protégés
+//----------------------------------------------------- Attributs protÃ©gÃ©s
 
 };
 
-//--------------------------- Autres définitions dépendantes de <DataTransfertTCPPull>
+//--------------------------- Autres dÃ©finitions dÃ©pendantes de <DataTransfertTCPPull>
 
 #endif // DATATRANSFERTTCPPULL_H
 

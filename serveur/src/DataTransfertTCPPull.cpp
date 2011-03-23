@@ -1,15 +1,15 @@
 /*************************************************************************
                            DataTransfertTCPPull  -  description
                              -------------------
-    début                : ...
-    copyright            : (C) 2011 par Pierre LULÉ
+    dÃ©but                : ...
+    copyright            : (C) 2011 par Pierre LULÃ‰
 *************************************************************************/
 
-//---------- Réalisation de la classe <DataTransfertTCPPull> (fichier DataTransfertTCPPull.cpp) -------
+//---------- RÃ©alisation de la classe <DataTransfertTCPPull> (fichier DataTransfertTCPPull.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- Include système
+//-------------------------------------------------------- Include systÃ¨me
 using namespace std;
 #include <iostream>
 
@@ -21,7 +21,7 @@ using namespace std;
 
 //----------------------------------------------------------------- PUBLIC
 
-//----------------------------------------------------- Méthodes publiques
+//----------------------------------------------------- MÃ©thodes publiques
 
 void  DataTransfertTCPPull::Begin()
 {
@@ -42,7 +42,7 @@ void  DataTransfertTCPPull::Begin()
 }
 
 
-//------------------------------------------------- Surcharge d'opérateurs
+//------------------------------------------------- Surcharge d'opÃ©rateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
@@ -56,5 +56,5 @@ DataTransfertTCPPull::~DataTransfertTCPPull ( )
 
 //------------------------------------------------------------------ PRIVE
 
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
 
