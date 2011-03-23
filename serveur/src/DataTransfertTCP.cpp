@@ -21,30 +21,28 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-// type DataTransfertTCP::Méthode ( liste des paramètres )
-// Algorithme :
-//
-//{
-//} //----- Fin de Méthode
-void DataTransfertTCP::Begin( )
-{
 
-    sock = socket(PF_INET, SOCK_STREAM, 0);
+
+//------------------------------------------------------------------ PRIVE
+
+//----------------------------------------------------- Méthodes protégées
+
+void DataTransfertTCP::connect()
+{
+	sock = socket(PF_INET, SOCK_STREAM, 0);
     
     if (connect (sock, (sockaddr *) &address, sizeof address) == -1)
     {
         cerr << "Connection failed" << endl;
         exit(EXIT_FAILURE);
     }
-
-    Run();
 }
 
-void DataTransfertTCP::Send(int id)
+void DataTransfertTCP::send(int id)
 {
     if (id = -1)
     {
-        id = currentPicture;
+        id = ++currentPicture;
     }
     else
     {
@@ -90,21 +88,7 @@ void DataTransfertTCP::Send(int id)
     }
 }
 
-//------------------------------------------------- Surcharge d'opérateurs
-
-//-------------------------------------------- Constructeurs - destructeur
-
-DataTransfertTCP::~DataTransfertTCP ( )
-// Algorithme :
-//
+void DataTransfertTCP::disconnect()
 {
-#ifdef MAP
-    cout << "Appel au destructeur de <DataTransfertTCP>" << endl;
-#endif
-    close(sock);
-} //----- Fin de ~DataTransfertTCP
 
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées
-
+}

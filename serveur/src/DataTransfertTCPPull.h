@@ -27,18 +27,15 @@ class DataTransfertTCPPull : public DataTransfertTCP
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    // type Méthode ( liste des paramètres );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
+    
+    void Begin();
 
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    DataTransfertTCPPull (  Stream& stream, sockaddr_in address, int port, int& pipe ) : DataTransfertTCP(stream, address, port, &pipe){}
+    DataTransfertTCPPull (Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd)
+    	: DataTransfertTCP(_stream, _clientAddress, _clientPort, _pipefd){}
     // Mode d'emploi :
     //
     // Contrat :
@@ -54,7 +51,7 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-    void Run();
+
 //----------------------------------------------------- Attributs protégés
 
 };

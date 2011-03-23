@@ -22,33 +22,10 @@ using namespace std;
 //----------------------------------------------------------------- PUBLIC
 
 //----------------------------------------------------- Méthodes publiques
-// type DataTransfertTCPPull::Méthode ( liste des paramètres )
-// Algorithme :
-//
-//{
-//} //----- Fin de Méthode
 
-
-//------------------------------------------------- Surcharge d'opérateurs
-
-//-------------------------------------------- Constructeurs - destructeur
-
-DataTransfertTCPPull::~DataTransfertTCPPull ( )
-// Algorithme :
-//
+void  DataTransfertTCPPull::Begin()
 {
-#ifdef MAP
-    cout << "Appel au destructeur de <DataTransfertTCPPull>" << endl;
-#endif
-} //----- Fin de ~DataTransfertTCPPull
-
-
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées
-void DataTransfertTCPPull::Run()
-{
-    char[PIPE_SIZE] cmd;
+	char[PIPE_SIZE] cmd;
     bool fin = false;
     while (!fin)
     {
@@ -63,3 +40,21 @@ void DataTransfertTCPPull::Run()
         }
     }
 }
+
+
+//------------------------------------------------- Surcharge d'opérateurs
+
+//-------------------------------------------- Constructeurs - destructeur
+
+DataTransfertTCPPull::~DataTransfertTCPPull ( )
+// Algorithme :
+//
+{
+
+} //----- Fin de ~DataTransfertTCPPull
+
+
+//------------------------------------------------------------------ PRIVE
+
+//----------------------------------------------------- Méthodes protégées
+

@@ -43,21 +43,20 @@ public:
 
 	DataTransfert ( Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd)
 	: stream(_stream), address(_address), port(_port), pipefd(_pipefd), currentPicture(0){ };
-	// <stream> : référence vers le flux associé au client
-	// <address> : addresse du client
-	// <port> : port de communication du client
-
-	virtual ~DataTransfert ( );
-	// Mode d'emploi : Détruit l'objet et ferme la connection
-	//
-	// Contrat :
-	//
+	// Mode d'emploi :
+	// 	<_stream>			: référence vers le flux associé au client
+	// 	<_clientAddress>	: addresse du client
+	// 	<_clientPort>		: port d'écoute du client
+	//	<_pipefd>			: descripteur de lecture du pipe
 
 //------------------------------------------------------------------ PRIVE
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-	virtual void Run( ) = 0;
+	
+	virtual void connect() = 0;
+	virtual void send(int imageId) = 0;
+	virtual void disconnect() = 0;
     
 //----------------------------------------------------- Attributs protégés
 	Stream& stream;

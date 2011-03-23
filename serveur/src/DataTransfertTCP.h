@@ -11,8 +11,10 @@
 
 //--------------------------------------------------- Interfaces utilisées
 #include "DataTransfert.h"
+
 //------------------------------------------------------------- Constantes 
 const int BUFFER_SIZE = 1024;
+
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
@@ -27,32 +29,24 @@ class DataTransfertTCP : public DataTransfert
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    // type Méthode ( liste des paramètres );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-    void Begin( );
 
-    void Send(int id);
+    virtual void Begin() = 0;
     
-
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
-    DataTransfertTCP ( Stream& stream, sockaddr_in address, int port, int& pipe ) : DataTransfert(stream, address, port, &pipe){}
 
-
-    virtual ~DataTransfertTCP ( );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+    DataTransfertTCP ( Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd )
+    	: DataTransfert(_stream, _clientAddress, _clientPort, _pipefd) {}
 
 //------------------------------------------------------------------ PRIVE 
 
 protected:
 //----------------------------------------------------- Méthodes protégées
+
+	void connect();
+	void send(int imageId);
+	void disconnect();
 
 //----------------------------------------------------- Attributs protégés
 
