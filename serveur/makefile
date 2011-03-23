@@ -1,9 +1,10 @@
+SRC_DIR=src
+INC_DIR=include
 CC=g++
 EXEC_NAME=serveur_vod
-INCLUDES=
+INCLUDES=-I $(INC_DIR)
 LIBS=
 OBJ_FILES=IOControl.o ActionConnection.o ActionClient.o ActionCommand.o Stream.o ActionHTTPConnection.o ActionHTTPClient.o Server.o Main.o
-SRC_DIR=src/
 OPT_CMP=-c -ggdb
 OPT_EDL=-o
 
@@ -22,9 +23,9 @@ clean:
 $(EXEC_NAME): $(OBJ_FILES)
 	$(CC) $(OPT_EDL) $(EXEC_NAME) $(OBJ_FILES) $(LIBS)
 	
-Main.o: $(SRC_DIR)Main.cpp
-	$(CC) $(OPT_CMP) $(INCLUDES) $(SRC_DIR)Main.cpp
+Main.o: $(SRC_DIR)/Main.cpp
+	$(CC) $(OPT_CMP) $(INCLUDES) $(SRC_DIR)/Main.cpp
 
 # Pattern de compilation des modules :
-%.o: $(SRC_DIR)%.cpp $(SRC_DIR)%.h
+%.o: $(SRC_DIR)/%.cpp $(INC_DIR)/%.h
 	$(CC) $(OPT_CMP) $(INCLUDES) $<
