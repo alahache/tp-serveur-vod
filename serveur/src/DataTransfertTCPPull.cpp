@@ -33,16 +33,6 @@ using namespace std;
 
 //-------------------------------------------- Constructeurs - destructeur
 
-DataTransfertTCPPull::DataTransfertTCPPull ( )
-// Algorithme :
-//
-{
-#ifdef MAP
-    cout << "Appel au constructeur de <DataTransfertTCPPull>" << endl;
-#endif
-} //----- Fin de DataTransfertTCPPull
-
-
 DataTransfertTCPPull::~DataTransfertTCPPull ( )
 // Algorithme :
 //

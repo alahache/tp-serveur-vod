@@ -43,7 +43,7 @@ public:
     DataTransfertTCP ( Stream& stream, sockaddr_in address, int port, int& pipe ) : DataTransfert(stream, address, port, &pipe){}
 
 
-    virtual ~DataTransfertTCP ( ){}
+    virtual ~DataTransfertTCP ( );
     // Mode d'emploi :
     //
     // Contrat :
