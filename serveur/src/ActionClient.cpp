@@ -74,16 +74,12 @@ void ActionClient::Execute(epoll_event event)
 					{
 						sline >> fragmentSize;
 						beginTransfert = true;
-						cout << "test fg" << endl;
 					}
 					else if(command == "listen_port" || command == "LISTEN_PORT")
 					{
 						sline >> listenPort;
 						if(stream.GetProtocol() == TCP_PULL || stream.GetProtocol() == TCP_PUSH)
-						{	
 							beginTransfert = true;
-						}
-						cout << "test listen" << endl;
 					}
 					
 					// On va créer le transfert

@@ -10,6 +10,7 @@
 #define ACTIONCLIENT_H
 
 //--------------------------------------------------- Interfaces utilisées
+#include <netinet/in.h>
 #include <arpa/inet.h>			// sockaddr_in
 
 #include "Action.h"
@@ -44,7 +45,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    ActionClient(IOControl& _io, ActionConnection& _connection, Stream& _stream, int _fd, sockaddr_in _clientAddress)
+    ActionClient(IOControl& _io, ActionConnection& _connection, Stream& _stream, int _fd, in_addr _clientAddress)
     	: Action(_io), connection(_connection), stream(_stream), fd(_fd), clientAddress(_clientAddress), transfertStarted(false) {}
     // Mode d'emploi :
     //	<_io>			: Gestionnaire d'e/s
@@ -67,7 +68,7 @@ protected:
 	int videoId;					// ID de la vidéo à envoyer
 	unsigned long fragmentSize;		// Taille du fragment pour un transfert UDP
 	unsigned int listenPort;		// Port utilisé
-	sockaddr_in clientAddress;		// Adresse du client
+	in_addr clientAddress;			// Adresse du client
 
 };
 
