@@ -10,8 +10,7 @@
 #define ACTIONCLIENT_H
 
 //--------------------------------------------------- Interfaces utilisées
-//#include <netinet/in.h>		// support IPv4
-#include <arpa/inet.h>
+#include <arpa/inet.h>			// sockaddr_in
 
 #include "Action.h"
 #include "ActionConnection.h"
