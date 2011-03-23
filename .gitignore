@@ -3,5 +3,8 @@
 #Ignorer les .o
 *.o
 
+#Ignorer les fichiers de sauvegarde
+*~
+
 #Ignorer l'exécutable du serveur
 serveur/serveur_vod

@@ -1,27 +1,27 @@
 /*************************************************************************
-                           DataTransfertPullTCP  -  description
+                           DataTransfertTCPPull  -  description
                              -------------------
-    début                : Mars 2011
+    début                : ...
     copyright            : (C) 2011 par Pierre LULÉ
 *************************************************************************/
 
-//---------- Interface de la classe <DataTransfertPullTCP> (fichier DataTransfertPullTCP.h) ------
-#if ! defined ( DATATRANSFERTPULLTCP_H )
-#define DATATRANSFERTPULLTCP_H
+//---------- Interface de la classe <DataTransfertTCPPull> (fichier DataTransfertTCPPull.h) ------
+#if ! defined ( DATATRANSFERTTCPPULL_H )
+#define DATATRANSFERTTCPPULL_H
 
 //--------------------------------------------------- Interfaces utilisées
-#include "DataTransfertPull.h"
+#include "DataTransfertTCP.h"
 //------------------------------------------------------------- Constantes 
-const BUFFER_SIZE = 1024;
+
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <DataTransfertPullTCP>
-// Implémentation de DataTransfertPull pour TCP
+// Rôle de la classe <DataTransfertTCPPull>
+//
 //
 //------------------------------------------------------------------------ 
 
-class DataTransfertPullTCP : public DataTransfertPull
+class DataTransfertTCPPull : public DataTransfertTCP
 {
 //----------------------------------------------------------------- PUBLIC
 
@@ -38,7 +38,13 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    virtual ~DataTransfertPullTCP ( );
+    DataTransfertTCPPull (  Stream& stream, sockaddr_in address, int port, int& pipe ) : DataTransfertTCP(stream, address, port, &pipe){}
+    // Mode d'emploi :
+    //
+    // Contrat :
+    //
+
+    virtual ~DataTransfertTCPPull ( );
     // Mode d'emploi :
     //
     // Contrat :
@@ -48,12 +54,12 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-
+    void Run();
 //----------------------------------------------------- Attributs protégés
 
 };
 
-//--------------------------- Autres définitions dépendantes de <DataTransfertPullTCP>
+//--------------------------- Autres définitions dépendantes de <DataTransfertTCPPull>
 
-#endif // DATATRANSFERTPULLTCP_H
+#endif // DATATRANSFERTTCPPULL_H
 

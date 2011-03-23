@@ -12,17 +12,17 @@
 //--------------------------------------------------- Interfaces utilisées
 #include <sys/socket.h>
 #include <netinet/in.h>
-//#include "Stream.h"
+#include <sys/types.h>
+#include <cstdlib>
+#include <string.h>
+#include <sys/types.h>
+#include <fstream>
+#include <sstream>
+#include "Stream.h"
 //------------------------------------------------------------- Constantes
-
+const int PIPE_SIZE = 100;
 //------------------------------------------------------------------ Types
-typedef struct sockaddr_in {
-    uint8_t         sin_len;       /* longueur totale      */
-    sa_family_t     sin_family;    /* famille : AF_INET     */
-    in_port_t       sin_port;      /* le numéro de port    */
-    struct in_addr  sin_addr;      /* l'adresse internet   */
-    unsigned char   sin_zero[8];   /* un champ de 8 zéros  */
-};
+
 //------------------------------------------------------------------------
 // Rôle de la classe <DataTransfert>
 // Interface d'un thread gérant la connexion avec un client.
@@ -41,22 +41,19 @@ public:
     // Contrat :
     //
 
-    virtual void* Run( void* args) = 0;
+    virtual void Begin( ) = 0;
     // Routine d'execution
+
 
 //------------------------------------------------- Surcharge d'opérateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    //DataTransfert ( Stream& _stream, sockaddr_in _address, int _port, int& _pipe) :
-    //stream(_stream), address(_address), port(_port), pipe(_pipe){ }
+    DataTransfert ( Stream& _stream, sockaddr_in _address, int _port, int& _pipe) :
+    stream(_stream), address(_address), port(_port), pipe(_pipe), currentPicture(0){ };
     // <stream> : référence vers le flux associé au client
     // <address> : addresse du client
     // <port> : port de communication du client
-
-    DataTransfert ( sockaddr_in _address, int _port) :
-    address(_address), port(_port){ }
-    // TEST TODO a supprimer
 
     virtual ~DataTransfert ( );
     // Mode d'emploi : Détruit l'objet et ferme la connection
@@ -68,14 +65,15 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-
+    virtual void Run( ) = 0;
 //----------------------------------------------------- Attributs protégés
 
-//Stream& stream;
-sockadrr_in address;
+Stream& stream;
+sockaddr_in address;
 int port;
 int& pipe;
 int sock;
+int currentPicture;
 
 };
 
