@@ -77,7 +77,7 @@ void ActionClient::Execute(epoll_event event)
 					}
 					else if(command == "listen_port" || command == "LISTEN_PORT")
 					{
-						sline >> listenPort;
+						sline >> clientPort;
 						if(stream.GetProtocol() == TCP_PULL || stream.GetProtocol() == TCP_PUSH)
 							beginTransfert = true;
 					}
@@ -85,26 +85,40 @@ void ActionClient::Execute(epoll_event event)
 					// On va créer le transfert
 					if(beginTransfert)
 					{
+					
+						// On va créer le pipe de communication avec le thread :
+						int pipefds[2];
+						int flags = 0;
+						if(stream.GetProtocol() == UDP_PUSH || stream.GetProtocol() == UDP_PULL)
+							flags = flags | O_NONBLOCK;
+						pipe2(pipefds, flags);
+						pipefd = pipefds[1];
+					
+						// On va créer le transfert :
 						if(stream.GetProtocol() == TCP_PUSH)
 						{
-							// TODO : créer instance transfert
+							// transfert = new DataTransfertTCPPush(stream, clientAddress, listenPort, pipefds[0]);
 						}
 						else if(stream.GetProtocol() == TCP_PULL)
 						{
-							// TODO : créer instance transfert
+							//transfert = new DataTransfertTCPPull(stream, clientAddress, listenPort, pipefds[0]);
 						}
 						else if(stream.GetProtocol() == UDP_PUSH)
 						{
-							// TODO : créer instance transfert
+							//transfert = new DataTransfertUDPPush(stream, clientAddress, listenPort, pipefds[0], fragmentSize);
 						}
 						else if(stream.GetProtocol() == UDP_PULL)
 						{
-							// TODO : créer instance transfert
+							//transfert = new DataTransfertUDPPull(stream, clientAddress, listenPort, pipefds[0], fragmentSize);
 						}
 						
-						// TODO : créer pipe
-						
-						// TODO : créer thread
+						// On va enfin créer un nouveau thread qui partira de ce transfert :
+						int err = pthread_create(&transfertThread, NULL, transfert->Begin, NULL);
+						if(err)
+						{
+							cerr << "Erreur : pthread_create" << endl;
+							Disconnect();
+						}
 						
 						transfertStarted = true;
 					}
@@ -117,8 +131,13 @@ void ActionClient::Execute(epoll_event event)
 					if(command == "end" || command == "END" || command == "close" || command == "CLOSE")
 					{
 						// DECONNEXION
-						// TODO envoyer commmand au pipe
-						// TODO attendre fin thread
+						string pipecmd = "END";
+						write(pipefd, pipecmd.c_str(), pipecmd.size()+1);
+						int err = pthread_join(transfertThread, NULL);
+						if(err)
+						{
+							cerr << "Erreur : pthread_join" << endl;
+						}
 						Disconnect();
 					}
 					
@@ -128,10 +147,10 @@ void ActionClient::Execute(epoll_event event)
 						
 						if(command == "get" || command == "GET")
 						{
-							int image_id;
+							string image_id;
 							sline >> image_id;
 							
-							// TODO envoyer image_id au pipe
+							write(pipefd, image_id.c_str(), image_id.size()+1);
 						}
 						
 					} // -- commande pull
@@ -141,15 +160,18 @@ void ActionClient::Execute(epoll_event event)
 						
 						if(command == "start" || command == "START")
 						{
-							// TODO : envoyer command au pipe
+							string pipecmd = "START";
+							write(pipefd, pipecmd.c_str(), pipecmd.size()+1);
 						}
 						else if(command == "pause" || command == "PAUSE")
 						{
-							// TODO : envoyer command au pipe
+							string pipecmd = "PAUSE";
+							write(pipefd, pipecmd.c_str(), pipecmd.size()+1);
 						}
 						else if(command == "alive" || command == "ALIVE")
 						{
-							// TODO : envoyer command au pipe	
+							string pipecmd = "ALIVE";
+							write(pipefd, pipecmd.c_str(), pipecmd.size()+1);
 						}
 						else if(command == "listen_port" || command == "LISTEN_PORT")
 						{

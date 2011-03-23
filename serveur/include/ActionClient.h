@@ -67,8 +67,11 @@ protected:
 	int fd;							// Descripteur de la connexion du client
 	int videoId;					// ID de la vidéo à envoyer
 	unsigned long fragmentSize;		// Taille du fragment pour un transfert UDP
-	unsigned int listenPort;		// Port utilisé
+	unsigned int clientPort;		// Port du client
 	in_addr clientAddress;			// Adresse du client
+	DataTransfert *transfert;		// Transfert du flux
+	pthread_t transfertThread;		// Thread utilisé lors du transfert
+	int pipefd;						// Descripteur en écriture du pipe
 
 };
 
