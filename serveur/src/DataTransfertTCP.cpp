@@ -31,19 +31,19 @@ void DataTransfertTCP::connect()
 	if(sock == -1)
 	{
 		cerr << "Erreur: socket" << endl;
-        exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-	
+
 	sockaddr_in addr;
 		addr.sin_family = AF_INET;
 		addr.sin_addr 	= clientAddress;
 		addr.sin_port 	= htons(clientPort);
-    
-    if (connect(sock, (sockaddr *) &addr, sizeof(address)) == -1)
-    {
-        cerr << "Erreur: connect" << endl;
-        exit(EXIT_FAILURE);
-    }
+
+	if (connect(sock, (sockaddr *) &addr, sizeof(addr)) == -1)
+	{
+		cerr << "Erreur: connect" << endl;
+		exit(EXIT_FAILURE);
+	}
 }
 
 void DataTransfertTCP::send(int id)
@@ -56,12 +56,12 @@ void DataTransfertTCP::send(int id)
 		send(currentImage);
 		return;
 	}
-	
+
 	// Taille de l'image
 	fs.seekg(0, ios::end);
 	long filelength = fs.tellg();
 	fs.seekg(0, ios::beg);
-	
+
 	// On alloue la mémoire :
 	char* filebuffer = new char[filelength];
 
@@ -74,7 +74,7 @@ void DataTransfertTCP::send(int id)
 	msg_header << id << CRLF;
 	msg_header << length << CRLF;
 	string str_header = header.str();
-	
+
 	// Assembage header + contenu fichier :
 	long msglength = filelength + str_header.size();
 	char* msg = new char[msglength];
@@ -85,21 +85,21 @@ void DataTransfertTCP::send(int id)
 	long total_sent = 0;
 	while(total_sent < responselength)
 	{
-	    long sent = send(sock, msg, msglength, 0);
-	    if(sent == -1)
-	    {
-	        cerr << "[" fd << "] Erreur envoi de données (send)" << endl;
-	        cerr << strerror(errno) << endl;
-	        break;
-	    }
-	    total_sent += sent;
+		long sent = send(sock, msg, msglength, 0);
+		if(sent == -1)
+		{
+		    cerr << "[" fd << "] Erreur envoi de données (send)" << endl;
+		    cerr << strerror(errno) << endl;
+		    break;
+		}
+		total_sent += sent;
 	}
-	
+
 	delete[] filebuffer;
 	delete[] msg;
 }
 
 void DataTransfertTCP::disconnect()
 {
-
+	close(sock);
 }
