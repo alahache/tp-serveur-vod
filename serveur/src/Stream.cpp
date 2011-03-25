@@ -63,6 +63,9 @@ string Stream::GetImagePath(int i)
 
 void Stream::Close()
 {
+	// MCAST_PUSH :
+	if(protocol == MCAST_PUSH) return;
+	
 	io.RemoveAction(s);
 	close(s);
 }
@@ -72,6 +75,9 @@ void Stream::Close()
 Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, VideoType _type, float _ips)
 	: io(_io), port(_port), protocol(_protocol), name(_name), type(_type), ips(_ips)
 {
+	// MCAST_PUSH :
+	if(protocol == MCAST_PUSH) return;
+	
 	// On crée une socket en TCP/IP pour écouter des clients sur ce flux :
 	s = socket(PF_INET, SOCK_STREAM, 0);
 	if(s < 0)
@@ -114,6 +120,9 @@ Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, Vide
 
 Stream::~Stream()
 {
+	// MCAST_PUSH :
+	if(protocol == MCAST_PUSH) return;
+	
 	delete connection;
 }
 

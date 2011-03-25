@@ -36,7 +36,7 @@ void  DataTransfertTCPPull::Begin()
         }
         else
         {
-            Send(atoi(cmd));
+            send(atoi(cmd));
         }
     }
 }

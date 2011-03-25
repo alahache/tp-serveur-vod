@@ -15,6 +15,8 @@ using namespace std;
 #include <sstream>
 #include <string>
 #include <sys/socket.h>
+#include <unistd.h>			// pipe
+#include <fcntl.h>			// O_NONBLOCK
 
 //------------------------------------------------------ Include personnel
 #include "ActionClient.h"
@@ -113,7 +115,7 @@ void ActionClient::Execute(epoll_event event)
 						}
 						
 						// On va enfin créer un nouveau thread qui partira de ce transfert :
-						int err = pthread_create(&transfertThread, NULL, transfert->Begin, NULL);
+						int err = pthread_create(&transfertThread, NULL, transfert->BeginThread, transfert);
 						if(err)
 						{
 							cerr << "Erreur : pthread_create" << endl;
@@ -175,7 +177,7 @@ void ActionClient::Execute(epoll_event event)
 						}
 						else if(command == "listen_port" || command == "LISTEN_PORT")
 						{
-							sline >> listenPort;
+							sline >> clientPort;
 							// TODO : récréer le transfert avec le port listenPort
 						}
 						
@@ -209,6 +211,12 @@ void ActionClient::Disconnect()
 	connection.RemoveClient(this);
 }
 
+//-------------------------------------------- Constructeurs - destructeur
+
+ActionClient::~ActionClient()
+{
+	delete transfert;
+}
 
 //------------------------------------------------------------------ PRIVE
 

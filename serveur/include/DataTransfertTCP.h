@@ -11,6 +11,10 @@
 
 //--------------------------------------------------- Interfaces utilisées
 #include "DataTransfert.h"
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
 
 //------------------------------------------------------------- Constantes 
 const int BUFFER_SIZE = 1024;
@@ -19,8 +23,9 @@ const int BUFFER_SIZE = 1024;
 
 //------------------------------------------------------------------------ 
 // Rôle de la classe <DataTransfertTCP>
-// Implémentation de DataTransfert pour TCP
-//
+// 	- Implémentation de DataTransfert pour TCP
+//	- Définition des méthodes utilisées pour envoyer des images du
+//	  flux avec le protocole TCP
 //------------------------------------------------------------------------ 
 
 class DataTransfertTCP : public DataTransfert
@@ -30,25 +35,31 @@ class DataTransfertTCP : public DataTransfert
 public:
 //----------------------------------------------------- Méthodes publiques
 
-    virtual void Begin() = 0;
-    
-//------------------------------------------------- Surcharge d'opérateurs
+	virtual void Begin() = 0;
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    DataTransfertTCP ( Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd )
-    	: DataTransfert(_stream, _clientAddress, _clientPort, _pipefd) {}
+	DataTransfertTCP(Stream& _stream, in_addr _clientAddress, int _clientPort)
+    	: DataTransfert(_stream), clientAddress(_clientAddress), clientPort(_clientPort) {};
+	// Mode d'emploi :
+	// 	<_stream>			: référence vers le flux associé au client
+	// 	<_clientAddress>	: addresse du client
+	// 	<_clientPort>		: port d'écoute du client
+	//
+	//	- Construit une nouvelle instance de la classe DataTransfertTCP.
 
 //------------------------------------------------------------------ PRIVE 
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-
 	void connect();
 	void send(int imageId);
 	void disconnect();
 
 //----------------------------------------------------- Attributs protégés
+	in_addr clientAddress;				// Adresse du client
+	int clientPort;						// Port d'écoute du client
+	int sock;							// Descripteur de la socket
 
 };
 

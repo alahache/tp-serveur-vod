@@ -18,11 +18,6 @@ using namespace std;
 
 //------------------------------------------------------------- Constantes
 
-//----------------------------------------------------------------- PUBLIC
-
-//----------------------------------------------------- Méthodes publiques
-
-
 //------------------------------------------------------------------ PRIVE
 
 //----------------------------------------------------- Méthodes protégées
@@ -55,7 +50,7 @@ void DataTransfertTCP::send(int id)
         }
         else
         {
-            // Taille
+            // Taille de l'image
             img.seekg(0, ios::end);
             long length = fs.tellg();
             img.seekg(0, ios::beg);
@@ -71,7 +66,7 @@ void DataTransfertTCP::send(int id)
             char* msg = new char[msg_size];
             memcpy(msg, msg_stream.c_str(), msg_size);
 
-            // Envoie du message
+            // Envoi du message
             long total_sent = 0;
             while(total_sent < responselength)
             {

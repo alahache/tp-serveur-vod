@@ -11,7 +11,9 @@
 
 //--------------------------------------------------- Interfaces utilisées
 #include "DataTransfertTCP.h"
-//------------------------------------------------------------- Constantes 
+
+//------------------------------------------------------------- Constantes
+const unsigned int PIPE_SIZE = 100;
 
 //------------------------------------------------------------------ Types 
 
@@ -35,7 +37,7 @@ public:
 //-------------------------------------------- Constructeurs - destructeur
 
     DataTransfertTCPPull (Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd)
-    	: DataTransfertTCP(_stream, _clientAddress, _clientPort, _pipefd){}
+    	: DataTransfertTCP(_stream, _clientAddress, _clientPort), pipefd(_pipefd) {}
     // Mode d'emploi :
     //
     // Contrat :
@@ -53,6 +55,7 @@ protected:
 //----------------------------------------------------- Méthodes protégées
 
 //----------------------------------------------------- Attributs protégés
+	int pipefd;					// Descripteur de lecture pour le pipe
 
 };
 

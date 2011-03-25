@@ -10,21 +10,20 @@
 #define DATATRANSFERT_H
 
 //--------------------------------------------------- Interfaces utilisées
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <fstream>
 #include "Stream.h"
+
 //------------------------------------------------------------- Constantes
-const int PIPE_SIZE = 100;
+const string CRLF = "\r\n";
 
 //------------------------------------------------------------------ Types
 
 //------------------------------------------------------------------------
 // Rôle de la classe <DataTransfert>
-// Interface d'un thread gérant la connexion avec un client.
-//
+// 	- Un DataTransfert permet d'échanger un flux avec un ou plusieurs
+//	  clients. le flux peut être de différent types, échangé avec un 
+//	  protocole particulier.
+//	- Cette classe définit une interface pouvant être implantée selon
+//	  les différents protocoles désirés.
 //------------------------------------------------------------------------
 
 class DataTransfert
@@ -34,37 +33,41 @@ class DataTransfert
 public:
 //----------------------------------------------------- Méthodes publiques
 
-	virtual void Begin( ) = 0;
-	// Routine d'execution
-
-//------------------------------------------------- Surcharge d'opérateurs
+	virtual void* Begin() = 0;
+	// Mode d'emploi :
+	//	- Méthode utilisée pour démarrer le transfert
+	//	- Redéfinie en fonction du protocole utilisé pour l'échange
+	// Contrat :
+	//	- Si on veut lancer le transfert dans un nouveau thread, on va
+	//	  devoir lancer le thread à partir de la méthode statique
+	//	  BeginThread ci-dessous.
+	
+	static void* BeginThread(void* transfert) { return ((DataTransfert*)transfert)->Begin(); }
+	// Mode d'emploi :
+	//	- Méthode utilisée comme point de départ à un nouveau Thread
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	DataTransfert ( Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd)
-	: stream(_stream), address(_address), port(_port), pipefd(_pipefd), currentPicture(0){ };
+	DataTransfert(Stream& _stream)
+	: stream(_stream), currentPicture(0) {};
 	// Mode d'emploi :
-	// 	<_stream>			: référence vers le flux associé au client
-	// 	<_clientAddress>	: addresse du client
-	// 	<_clientPort>		: port d'écoute du client
-	//	<_pipefd>			: descripteur de lecture du pipe
+	// 	<_stream>			: référence vers le flux associé au transfert
+	//
+	//	- Construit une nouvelle instance de la classe DataTransfert. Chaque
+	//	  transfert est associé à un flux.
+	//	- L'image courante est initialisée à 0.
 
 //------------------------------------------------------------------ PRIVE
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-	
 	virtual void connect() = 0;
 	virtual void send(int imageId) = 0;
 	virtual void disconnect() = 0;
     
 //----------------------------------------------------- Attributs protégés
-	Stream& stream;
-	in_addr clientAddress;
-	int clientPort;
-	int pipefd;
-	int sock;
-	int currentPicture;
+	Stream& stream;				// Flux associé au transfert
+	int currentPicture;			// Image courante à envoyer
 
 };
 
