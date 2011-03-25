@@ -1,15 +1,15 @@
 /*************************************************************************
                            DataTransfertUDP  -  description
                              -------------------
-    début                : ...
+    dÃ©but                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
-//---------- Réalisation de la classe <DataTransfertUDP> (fichier DataTransfertUDP.cpp) -------
+//---------- RÃ©alisation de la classe <DataTransfertUDP> (fichier DataTransfertUDP.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- Include système
+//-------------------------------------------------------- Include systÃ¨me
 using namespace std;
 #include <iostream>
 
@@ -20,7 +20,7 @@ using namespace std;
 
 //------------------------------------------------------------------ PRIVE
 
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
 
 void DataTransfertUDP::connect()
 {

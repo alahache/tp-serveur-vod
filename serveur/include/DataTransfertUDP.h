@@ -1,7 +1,7 @@
 /*************************************************************************
                            DataTransfertUDP  -  description
                              -------------------
-    début                : ...
+    dÃ©but                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
@@ -9,7 +9,7 @@
 #if ! defined ( DATATRANSFERTUDP_H )
 #define DATATRANSFERTUDP_H
 
-//--------------------------------------------------- Interfaces utilisées
+//--------------------------------------------------- Interfaces utilisÃ©es
 #include "DataTransfert.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -21,9 +21,9 @@
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <DataTransfertUDP>
-//	- Implémentation de DataTransfert pour UDP
-//	- Définition des méthodes utilisées pour envoyer des images du
+// RÃ´le de la classe <DataTransfertUDP>
+//	- ImplÃ©mentation de DataTransfert pour UDP
+//	- DÃ©finition des mÃ©thodes utilisÃ©es pour envoyer des images du
 //	  flux avec le protocole UDP
 //------------------------------------------------------------------------ 
 
@@ -32,7 +32,7 @@ class DataTransfertUDP : public DataTransfert
 //----------------------------------------------------------------- PUBLIC
 
 public:
-//----------------------------------------------------- Méthodes publiques
+//----------------------------------------------------- MÃ©thodes publiques
 
 	virtual void Begin() = 0;
 
@@ -41,30 +41,30 @@ public:
 	DataTransfertUDP(Stream& _stream, in_addr _clientAddress, int _clientPort, unsigned int _fragmentSize)
     	: DataTransfert(_stream), clientAddress(_clientAddress), clientPort(_clientPort), fragmentSize(_fragmentSize) {}
     // Mode d'emploi :
-	// 	<_stream>			: référence vers le flux associé au transfert
+	// 	<_stream>			: rÃ©fÃ©rence vers le flux associÃ© au transfert
 	// 	<_clientAddress>	: addresse du client
-	// 	<_clientPort>		: port d'écoute du client
-	// 	<_fragmentSize>		: taille des fragments de données envoyés
+	// 	<_clientPort>		: port d'Ã©coute du client
+	// 	<_fragmentSize>		: taille des fragments de donnÃ©es envoyÃ©s
 	//
 	//	- Construit une nouvelle instance de la classe DataTransfertUDP.
 
 //------------------------------------------------------------------ PRIVE 
 
 protected:
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
 	void connect();
 	void send(int imageId);
 	void disconnect();
 
-//----------------------------------------------------- Attributs protégés
+//----------------------------------------------------- Attributs protÃ©gÃ©s
 	in_addr clientAddress;				// Adresse du client
-	int clientPort;						// Port d'écoute du client
+	int clientPort;						// Port d'Ã©coute du client
 	int sock;							// Descripteur de la socket
-	unsigned int fragmentSize;			// Taille des fragments de données
+	unsigned int fragmentSize;			// Taille des fragments de donnÃ©es
 
 };
 
-//--------------------------- Autres définitions dépendantes de <DataTransfertUDP>
+//--------------------------- Autres dÃ©finitions dÃ©pendantes de <DataTransfertUDP>
 
 #endif // DATATRANSFERTUDP_H
 
