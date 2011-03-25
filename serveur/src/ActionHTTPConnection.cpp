@@ -35,7 +35,7 @@ void ActionHTTPConnection::Execute(epoll_event event)
 	sockaddr_in client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
 	int conn_sock = accept(s, (struct sockaddr *) &client_addr, &client_addr_len);
-	if(conn_sock < 0)
+	if(conn_sock == -1)
 	{
 		cerr << "accept" << endl;
 		exit(EXIT_FAILURE);

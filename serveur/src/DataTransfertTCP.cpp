@@ -12,6 +12,9 @@
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
 
 //------------------------------------------------------ Include personnel
 #include "DataTransfertTCP.h"
@@ -25,62 +28,75 @@ using namespace std;
 void DataTransfertTCP::connect()
 {
 	sock = socket(PF_INET, SOCK_STREAM, 0);
+	if(sock == -1)
+	{
+		cerr << "Erreur: socket" << endl;
+        exit(EXIT_FAILURE);
+	}
+	
+	sockaddr_in addr;
+		addr.sin_family = AF_INET;
+		addr.sin_addr 	= clientAddress;
+		addr.sin_port 	= htons(clientPort);
     
-    if (connect (sock, (sockaddr *) &address, sizeof address) == -1)
+    if (connect(sock, (sockaddr *) &addr, sizeof(address)) == -1)
     {
-        cerr << "Connection failed" << endl;
+        cerr << "Erreur: connect" << endl;
         exit(EXIT_FAILURE);
     }
 }
 
 void DataTransfertTCP::send(int id)
 {
-    if (id = -1)
-    {
-        id = ++currentPicture;
-    }
-    else
-    {
-        // Ouverture de l'image
-        ifstream img(stream.GetImagePath(i).c_str());
-        if (img.fail())
-        {
-            cerr << "Could not open file " << stream.GetImagePath << endl;
-            exit (EXIT_FAILURE);
-        }
-        else
-        {
-            // Taille de l'image
-            img.seekg(0, ios::end);
-            long length = fs.tellg();
-            img.seekg(0, ios::beg);
+	// Ouverture de l'image
+	ifstream fs(stream.GetImagePath(id).c_str());
+	if(fs.fail())
+	{
+		currentImage = 0;
+		send(currentImage);
+		return;
+	}
+	
+	// Taille de l'image
+	fs.seekg(0, ios::end);
+	long filelength = fs.tellg();
+	fs.seekg(0, ios::beg);
+	
+	// On alloue la mémoire :
+	char* filebuffer = new char[filelength];
 
-            // Construction du message
-            stringstream msg_stream;
-            msg_stream << id << CRLF;
-            msg_stream << length << CRLF;
-            msg_stream << fs;
+	// On lit le fichier en bloc :
+	fs.read(filebuffer, length);
+	fs.close();
 
-            // Préparation du message
-            long msg_size = msg.size();
-            char* msg = new char[msg_size];
-            memcpy(msg, msg_stream.c_str(), msg_size);
+	// Construction du header :
+	stringstream msg_header;
+	msg_header << id << CRLF;
+	msg_header << length << CRLF;
+	string str_header = header.str();
+	
+	// Assembage header + contenu fichier :
+	long msglength = filelength + str_header.size();
+	char* msg = new char[msglength];
+	memcpy(msg, str_header.c_str(), str_header.size());
+	memcpy(msg + str_header.size(), filebuffer, filelength);
 
-            // Envoi du message
-            long total_sent = 0;
-            while(total_sent < responselength)
-            {
-                long sent = send(sock, msg, msg_size, 0);
-                if(sent == -1)
-                {
-                    cerr << "[" fd << "] Erreur envoi de données (send)" << endl;
-                    cerr << strerror(errno) << endl;
-                    break;
-                }
-                total_sent += sent;
-            }
-        }
-    }
+	// Envoi du message :
+	long total_sent = 0;
+	while(total_sent < responselength)
+	{
+	    long sent = send(sock, msg, msglength, 0);
+	    if(sent == -1)
+	    {
+	        cerr << "[" fd << "] Erreur envoi de données (send)" << endl;
+	        cerr << strerror(errno) << endl;
+	        break;
+	    }
+	    total_sent += sent;
+	}
+	
+	delete[] filebuffer;
+	delete[] msg;
 }
 
 void DataTransfertTCP::disconnect()

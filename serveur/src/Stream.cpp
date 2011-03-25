@@ -80,7 +80,7 @@ Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, Vide
 	
 	// On crée une socket en TCP/IP pour écouter des clients sur ce flux :
 	s = socket(PF_INET, SOCK_STREAM, 0);
-	if(s < 0)
+	if(s == -1)
 	{
 		cerr << "socket" << endl;
 		exit(EXIT_FAILURE);
@@ -96,14 +96,14 @@ Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, Vide
 		addr.sin_addr.s_addr = htonl(INADDR_ANY);		// htonl : convertit un long vers le format réseau
 		addr.sin_port = htons(port);					// htons : convertit un short vers le format réseau
 		
-	if(bind(s, (struct sockaddr *) &addr, sizeof(addr)) < 0)
+	if(bind(s, (struct sockaddr *) &addr, sizeof(addr)) == -1)
 	{
 		cerr << "bind" << endl;
 		exit(EXIT_FAILURE);
 	}
 	
 	// On met en écoute la socket :
-	if(listen(s, NBMAX_CLIENTS) < 0)
+	if(listen(s, NBMAX_CLIENTS) == -1)
 	{
 		cerr << "listen" << endl;
 		exit(EXIT_FAILURE);

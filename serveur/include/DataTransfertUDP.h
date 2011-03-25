@@ -57,6 +57,7 @@ protected:
 	void disconnect();
 
 //----------------------------------------------------- Attributs protégés
+	sockaddr_in addr;					// Client
 	in_addr clientAddress;				// Adresse du client
 	int clientPort;						// Port d'écoute du client
 	int sock;							// Descripteur de la socket
