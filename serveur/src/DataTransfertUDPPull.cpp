@@ -1,11 +1,11 @@
 /*************************************************************************
-                           DataTransfertTCPPull  -  description
+                           DataTransfertUDPPull  -  description
                              -------------------
     début                : ...
-    copyright            : (C) 2011 par Pierre LULÉ
+    copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
-//---------- Réalisation de la classe <DataTransfertTCPPull> (fichier DataTransfertTCPPull.cpp) -------
+//---------- Réalisation de la classe <DataTransfertUDPPull> (fichier DataTransfertUDPPull.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -15,8 +15,7 @@ using namespace std;
 #include <cstdlib>
 
 //------------------------------------------------------ Include personnel
-#include "DataTransfertTCPPull.h"
-
+#include "DataTransfertUDPPull.h"
 
 //------------------------------------------------------------- Constantes
 
@@ -24,7 +23,7 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes publiques
 
-void* DataTransfertTCPPull::Begin()
+void* DataTransfertUDPPull::Begin()
 {
     bool end = false;
     while (!end)
@@ -46,19 +45,6 @@ void* DataTransfertTCPPull::Begin()
     
     return 0;
 }
-
-
-//------------------------------------------------- Surcharge d'opérateurs
-
-//-------------------------------------------- Constructeurs - destructeur
-
-DataTransfertTCPPull::~DataTransfertTCPPull ( )
-// Algorithme :
-//
-{
-
-} //----- Fin de ~DataTransfertTCPPull
-
 
 //------------------------------------------------------------------ PRIVE
 

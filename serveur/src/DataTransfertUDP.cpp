@@ -76,7 +76,7 @@ void DataTransfertUDP::send(int id)
 		long msglength = imgfraglength + str_header.size();
 		char* msg = new char[msglength];
 		memcpy(msg, str_header.c_str(), str_header.size());
-		memcpy(msg + str_header.size(), filebuffer, filelength);
+		memcpy(msg + str_header.size(), filebuffer, imgfraglength);
 		
 		// Envoi du message :
 		long total_sent = 0;

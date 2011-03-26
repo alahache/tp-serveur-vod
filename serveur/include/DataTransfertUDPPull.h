@@ -1,50 +1,49 @@
 /*************************************************************************
-                           DataTransfertUDP  -  description
+                           DataTransfertUDPPull  -  description
                              -------------------
     début                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
-//---------- Interface de la classe <DataTransfertUDP> (fichier DataTransfertUDP.h) ------
-#if ! defined ( DATATRANSFERTUDP_H )
-#define DATATRANSFERTUDP_H
+//---------- Interface de la classe <DataTransfertUDPPull> (fichier DataTransfertUDPPull.h) ------
+#if ! defined ( DATATRANSFERTUDPPULL_H )
+#define DATATRANSFERTUDPPULL_H
 
 //--------------------------------------------------- Interfaces utilisées
-#include "DataTransfert.h"
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
+#include "DataTransfertUDP.h"
 
 //------------------------------------------------------------- Constantes 
+const unsigned int PIPE_SIZE = 100;
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <DataTransfertUDP>
-//	- Implémentation de DataTransfert pour UDP
-//	- Définition des méthodes utilisées pour envoyer des images du
-//	  flux avec le protocole UDP
+// Rôle de la classe <DataTransfertUDPPull>
+//	- Implémentation de DataTransfertUDP pour le protocole Pull
+//	- Les images sont envoyées au client seulement lorsqu'on envoie
+//	  un numéro au pipe <pipefd>, qui représente la position de l'image
+//	  dans le flux.
 //------------------------------------------------------------------------ 
 
-class DataTransfertUDP : public DataTransfert
+class DataTransfertUDPPull : public DataTransfertUDP
 {
 //----------------------------------------------------------------- PUBLIC
 
 public:
 //----------------------------------------------------- Méthodes publiques
-
-	virtual void* Begin() = 0;
+	
+	void* Begin();
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	DataTransfertUDP(Stream& _stream, in_addr _clientAddress, int _clientPort, unsigned int _fragmentSize)
-    	: DataTransfert(_stream), clientAddress(_clientAddress), clientPort(_clientPort), fragmentSize(_fragmentSize) {}
-    // Mode d'emploi :
+    DataTransfertUDPPull(Stream& _stream, in_addr _clientAddress, int _clientPort, unsigned int _fragmentSize, int _pipefd)
+    	: DataTransfertUDP(_stream, _clientAddress, _clientPort, _fragmentSize), pipefd(_pipefd) {}
+	// Mode d'emploi :
 	// 	<_stream>			: référence vers le flux associé au transfert
 	// 	<_clientAddress>	: addresse du client
 	// 	<_clientPort>		: port d'écoute du client
 	// 	<_fragmentSize>		: taille des fragments de données envoyés
+	// 	<_pipefd>			: descripeur du pipe en lecture
 	//
 	//	- Construit une nouvelle instance de la classe DataTransfertUDP.
 
@@ -52,20 +51,13 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-	void connect();
-	void send(int imageId);
-	void disconnect();
 
 //----------------------------------------------------- Attributs protégés
-	sockaddr_in addr;					// Client
-	in_addr clientAddress;				// Adresse du client
-	int clientPort;						// Port d'écoute du client
-	int sock;							// Descripteur de la socket
-	unsigned int fragmentSize;			// Taille des fragments de données
+	int pipefd;					// Descripteur du pipe en lecture
 
 };
 
-//--------------------------- Autres définitions dépendantes de <DataTransfertUDP>
+//--------------------------- Autres définitions dépendantes de <DataTransfertUDPPull>
 
-#endif // DATATRANSFERTUDP_H
+#endif // DATATRANSFERTUDPPULL_H
 

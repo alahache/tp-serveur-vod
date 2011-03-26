@@ -35,7 +35,7 @@ class DataTransfertTCP : public DataTransfert
 public:
 //----------------------------------------------------- Méthodes publiques
 
-	virtual void Begin() = 0;
+	virtual void* Begin() = 0;
 
 //-------------------------------------------- Constructeurs - destructeur
 

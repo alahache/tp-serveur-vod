@@ -30,7 +30,7 @@ class DataTransfertTCPPull : public DataTransfertTCP
 public:
 //----------------------------------------------------- Méthodes publiques
     
-    void Begin();
+    void* Begin();
 
 //------------------------------------------------- Surcharge d'opérateurs
 
