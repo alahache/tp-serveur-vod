@@ -25,7 +25,7 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes protégées
 
-void DataTransfertUDP::connect()
+void DataTransfertUDP::data_connect()
 {
 	sock = socket(PF_INET, SOCK_DGRAM, 0);
 	if(sock == -1)
@@ -39,7 +39,7 @@ void DataTransfertUDP::connect()
 	addr.sin_port 	= htons(clientPort);
 }
 
-void DataTransfertUDP::send(int id)
+void DataTransfertUDP::data_send(int id)
 {
 	// Ouverture de l'image
 	ifstream fs(stream.GetImagePath(id).c_str());
@@ -101,7 +101,7 @@ void DataTransfertUDP::send(int id)
 	
 }
 
-void DataTransfertUDP::disconnect()
+void DataTransfertUDP::data_disconnect()
 {
 	close(sock);
 }

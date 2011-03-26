@@ -99,19 +99,19 @@ void ActionClient::Execute(epoll_event event)
 						// On va créer le transfert :
 						if(stream.GetProtocol() == TCP_PUSH)
 						{
-							// transfert = new DataTransfertTCPPush(stream, clientAddress, listenPort, pipefds[0]);
+							//transfert = new DataTransfertTCPPush(stream, clientAddress, clientPort, pipefds[0]);
 						}
 						else if(stream.GetProtocol() == TCP_PULL)
 						{
-							//transfert = new DataTransfertTCPPull(stream, clientAddress, listenPort, pipefds[0]);
+							transfert = new DataTransfertTCPPull(stream, clientAddress, clientPort, pipefds[0]);
 						}
 						else if(stream.GetProtocol() == UDP_PUSH)
 						{
-							//transfert = new DataTransfertUDPPush(stream, clientAddress, listenPort, pipefds[0], fragmentSize);
+							//transfert = new DataTransfertUDPPush(stream, clientAddress, clientPort, pipefds[0], fragmentSize);
 						}
 						else if(stream.GetProtocol() == UDP_PULL)
 						{
-							//transfert = new DataTransfertUDPPull(stream, clientAddress, listenPort, pipefds[0], fragmentSize);
+							//transfert = new DataTransfertUDPPull(stream, clientAddress, clientPort, pipefds[0], fragmentSize);
 						}
 						
 						// On va enfin créer un nouveau thread qui partira de ce transfert :

@@ -19,9 +19,10 @@
 #include "IOControl.h"
 #include "Stream.h"
 #include "DataTransfert.h"
+#include "DataTransfertTCPPull.h"
 
 //------------------------------------------------------------- Constantes
-const unsigned int BUFFER_SIZE = 768;
+//const unsigned int BUFFER_SIZE = 768;
 
 //------------------------------------------------------------------------ 
 // Rôle de la classe <ActionClient>
