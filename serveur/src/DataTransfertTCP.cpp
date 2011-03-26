@@ -25,7 +25,7 @@ using namespace std;
 
 //----------------------------------------------------- Méthodes protégées
 
-void DataTransfertTCP::connect()
+void DataTransfertTCP::data_connect()
 {
 	sock = socket(PF_INET, SOCK_STREAM, 0);
 	if(sock == -1)
@@ -42,19 +42,25 @@ void DataTransfertTCP::connect()
 	if (connect(sock, (sockaddr *) &addr, sizeof(addr)) == -1)
 	{
 		cerr << "Erreur: connect" << endl;
+        cerr << strerror(errno) << endl;
 		exit(EXIT_FAILURE);
 	}
 }
 
-void DataTransfertTCP::send(int id)
+void DataTransfertTCP::data_send(int id)
 {
 	// Ouverture de l'image
 	ifstream fs(stream.GetImagePath(id).c_str());
 	if(fs.fail())
 	{
 		currentImage = 0;
-		send(currentImage);
-		return;
+        id = 0;
+        fs.open(stream.GetImagePath(id).c_str());
+        if (fs.fail())
+        {
+            cerr << "La vid�o " << stream.GetImagePath(id).c_str() << " est introuvable." << endl;
+            exit(EXIT_FAILURE);
+        }
 	}
 
 	// Taille de l'image
@@ -66,14 +72,14 @@ void DataTransfertTCP::send(int id)
 	char* filebuffer = new char[filelength];
 
 	// On lit le fichier en bloc :
-	fs.read(filebuffer, length);
+	fs.read(filebuffer, filelength);
 	fs.close();
 
 	// Construction du header :
 	stringstream msg_header;
 	msg_header << id << CRLF;
-	msg_header << length << CRLF;
-	string str_header = header.str();
+	msg_header << filelength << CRLF;
+	string str_header = msg_header.str();
 
 	// Assembage header + contenu fichier :
 	long msglength = filelength + str_header.size();
@@ -83,12 +89,12 @@ void DataTransfertTCP::send(int id)
 
 	// Envoi du message :
 	long total_sent = 0;
-	while(total_sent < responselength)
+	while(total_sent < msglength)
 	{
 		long sent = send(sock, msg, msglength, 0);
 		if(sent == -1)
 		{
-		    cerr << "[" fd << "] Erreur envoi de données (send)" << endl;
+		    cerr << "[" << sock << "] Erreur envoi de données (send)" << endl;
 		    cerr << strerror(errno) << endl;
 		    break;
 		}
@@ -99,7 +105,7 @@ void DataTransfertTCP::send(int id)
 	delete[] msg;
 }
 
-void DataTransfertTCP::disconnect()
+void DataTransfertTCP::data_disconnect()
 {
 	close(sock);
 }

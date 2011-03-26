@@ -15,9 +15,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
+#include <string.h>
+#include <errno.h>
 
 //------------------------------------------------------------- Constantes 
-const int BUFFER_SIZE = 1024;
+const unsigned int BUFFER_SIZE = 768;
 
 //------------------------------------------------------------------ Types 
 
@@ -52,9 +54,9 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-	void connect();
-	void send(int imageId);
-	void disconnect();
+	void data_connect();
+	void data_send(int imageId);
+	void data_disconnect();
 
 //----------------------------------------------------- Attributs protégés
 	in_addr clientAddress;				// Adresse du client

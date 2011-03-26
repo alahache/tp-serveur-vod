@@ -52,9 +52,9 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-	void connect();
-	void send(int imageId);
-	void disconnect();
+	void data_connect();
+	void data_send(int imageId);
+	void data_disconnect();
 
 //----------------------------------------------------- Attributs protégés
 	sockaddr_in addr;					// Client

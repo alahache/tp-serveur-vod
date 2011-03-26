@@ -25,6 +25,7 @@ using namespace std;
 
 void* DataTransfertUDPPull::Begin()
 {
+    data_connect();
     bool end = false;
     while (!end)
     {
@@ -42,7 +43,7 @@ void* DataTransfertUDPPull::Begin()
             send(image_id);
         }
     }
-    
+    data_disconnect();
     return 0;
 }
 

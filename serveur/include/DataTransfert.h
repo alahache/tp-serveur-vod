@@ -61,9 +61,9 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
-	virtual void connect() = 0;
-	virtual void send(int imageId) = 0;
-	virtual void disconnect() = 0;
+	virtual void data_connect() = 0;
+	virtual void data_send(int imageId) = 0;
+	virtual void data_disconnect() = 0;
     
 //----------------------------------------------------- Attributs protégés
 	Stream& stream;				// Flux associé au transfert
