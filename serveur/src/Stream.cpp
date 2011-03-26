@@ -22,6 +22,7 @@ using namespace std;
 //------------------------------------------------------ Include personnel
 #include "Stream.h"
 #include "ActionConnection.h"
+#include "ActionClient.h"
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -75,9 +76,63 @@ void Stream::Close()
 Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, VideoType _type, float _ips)
 	: io(_io), port(_port), protocol(_protocol), name(_name), type(_type), ips(_ips)
 {
+
+	if(protocol == UDP_PULL || protocol == UDP_PUSH)
+		connectUDP();
+	else if(protocol == TCP_PULL || protocol == TCP_PUSH)
+		connectTCP();
+
+}
+
+
+Stream::~Stream()
+{
 	// MCAST_PUSH :
 	if(protocol == MCAST_PUSH) return;
 	
+	delete connection;
+}
+
+
+//------------------------------------------------------------------ PRIVE
+
+//----------------------------------------------------- Méthodes protégées
+
+void Stream::connectUDP()
+{
+	// On crée une socket en UDP pour écouter des clients sur ce flux :
+	s = socket(PF_INET, SOCK_DGRAM, 0);
+	if(s == -1)
+	{
+		cerr << "socket" << endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	// On contourne le probleme de l'adresse et du port déjà utilisés :
+	int opt=1;
+	setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	
+	// On attache le port à la socket :
+	struct sockaddr_in addr;
+		addr.sin_family = AF_INET;
+		addr.sin_addr.s_addr = htonl(INADDR_ANY);		// htonl : convertit un long vers le format réseau
+		addr.sin_port = htons(port);					// htons : convertit un short vers le format réseau
+		
+	if(bind(s, (struct sockaddr *) &addr, sizeof(addr)) == -1)
+	{
+		cerr << "bind" << endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	// On va créer une action pour gérer l'envoi des messages des clients :
+	connection = new ActionClient(io, *this, s);
+	
+	// On ajoute la socket et l'action au gestionnaire d'e/s :
+	io.AddAction(s, connection, EPOLLIN);
+}
+
+void Stream::connectTCP()
+{
 	// On crée une socket en TCP/IP pour écouter des clients sur ce flux :
 	s = socket(PF_INET, SOCK_STREAM, 0);
 	if(s == -1)
@@ -114,20 +169,4 @@ Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, Vide
 	
 	// On ajoute la socket et l'action au gestionnaire d'e/s :
 	io.AddAction(s, connection, EPOLLIN);
-	
 }
-
-
-Stream::~Stream()
-{
-	// MCAST_PUSH :
-	if(protocol == MCAST_PUSH) return;
-	
-	delete connection;
-}
-
-
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées
-

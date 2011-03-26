@@ -15,11 +15,14 @@ using namespace std;
 #include <sstream>
 #include <string>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h>			// pipe
 #include <fcntl.h>			// O_NONBLOCK
 
 //------------------------------------------------------ Include personnel
 #include "ActionClient.h"
+#include "DataTransfertTCPPull.h"
+#include "DataTransfertUDPPull.h"
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -44,13 +47,25 @@ void ActionClient::Execute(epoll_event event)
 		// DEMANDE DE LECTURE
 		//cout << "[" << fd << "] Réception d'une requête de lecture..." << endl;
 		
-		int received = recv(fd, buffer, BUFFER_SIZE, 0);
+		// On va recevoir le message différement selon qu'on soit en UDP ou TCP :
+		int received;
+		if(stream.GetProtocol() == UDP_PULL || stream.GetProtocol() == UDP_PUSH)
+		{
+			sockaddr_in addr;
+			int addrsize = sizeof(addr);
+			received = recvfrom(fd, buffer, BUFFER_SIZE, 0, (sockaddr*) &addr, (socklen_t*) &addrsize);
+			clientAddress = addr.sin_addr;
+		}
+		else if(stream.GetProtocol() == TCP_PULL || stream.GetProtocol() == TCP_PUSH)
+		{
+			received = recv(fd, buffer, BUFFER_SIZE, 0);
+		}
 		//int received = read(fd, buffer, BUFFER_SIZE);
 		if(received > 0)
 		{
 			// LECTURE D'UN MESSAGE
 			buffer[received] = '\0';
-			//cout << "[" << fd << "] Lecture de " << received << " octets : " << buffer << endl;
+			cout << "[" << fd << "] Lecture de " << received << " octets : " << buffer << endl;
 			
 			stringstream message(buffer);
 			string line;
@@ -111,7 +126,7 @@ void ActionClient::Execute(epoll_event event)
 						}
 						else if(stream.GetProtocol() == UDP_PULL)
 						{
-							//transfert = new DataTransfertUDPPull(stream, clientAddress, clientPort, pipefds[0], fragmentSize);
+							transfert = new DataTransfertUDPPull(stream, clientAddress, clientPort, fragmentSize, pipefds[0]);
 						}
 						
 						// On va enfin créer un nouveau thread qui partira de ce transfert :
@@ -202,6 +217,9 @@ void ActionClient::Execute(epoll_event event)
 void ActionClient::Disconnect()
 {
 	//cout << "[" << fd << "] Déconnexion du client" << endl;
+	
+	// On a pas besoin de déconnecter le client en UDP :
+	if(stream.GetProtocol() == UDP_PUSH || stream.GetProtocol() == UDP_PULL) return;
 
 	// On supprime le descipteur de la connexion :
 	io.RemoveAction(fd);

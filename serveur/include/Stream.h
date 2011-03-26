@@ -80,6 +80,8 @@ public:
 
 protected:
 //----------------------------------------------------- Méthodes protégées
+	void connectUDP();
+	void connectTCP();
 
 //----------------------------------------------------- Attributs protégés
 	// Paramètres du serveur :

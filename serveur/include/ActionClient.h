@@ -19,7 +19,6 @@
 #include "IOControl.h"
 #include "Stream.h"
 #include "DataTransfert.h"
-#include "DataTransfertTCPPull.h"
 
 //------------------------------------------------------------- Constantes
 //const unsigned int BUFFER_SIZE = 768;
@@ -48,13 +47,14 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	ActionClient(IOControl& _io, ActionConnection& _connection, Stream& _stream, int _fd, in_addr _clientAddress)
+	ActionClient(IOControl& _io, Stream& _stream, int _fd, ActionConnection& _connection = *((ActionConnection*) NULL), in_addr _clientAddress = in_addr())
 		: Action(_io), connection(_connection), stream(_stream), fd(_fd), clientAddress(_clientAddress), transfertStarted(false) {}
     // Mode d'emploi :
-    //	<_io>			: Gestionnaire d'e/s
-    //	<_connection>	: Action gérant la connexion des clients
-    //	<_stream>		: Flux associé à la connexion
-    //	<_fd>			: Descripteur de la connexion du client
+    //	<_io>				: Gestionnaire d'e/s
+    //	<_connection>		: Action gérant la connexion des clients
+    //	<_stream>			: Flux associé à la connexion
+    //	<_fd>				: Descripteur de la connexion du client
+    //	<_clientAddress>	: Adresse du client
     //
     //	- Construit une nouvelle instance de ActionClient.
     

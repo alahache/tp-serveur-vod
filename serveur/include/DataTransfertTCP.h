@@ -15,8 +15,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
-#include <string.h>
-#include <errno.h>
 
 //------------------------------------------------------------- Constantes 
 const unsigned int BUFFER_SIZE = 768;

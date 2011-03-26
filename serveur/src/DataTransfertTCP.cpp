@@ -1,20 +1,22 @@
 /*************************************************************************
                            DataTransfertTCP  -  description
                              -------------------
-    début                : Mars 2011
+    dÃ©but                : Mars 2011
     copyright            : (C) 2011 par Pierre LULÉ
 *************************************************************************/
 
-//---------- Réalisation de la classe <DataTransfertTCP> (fichier DataTransfertTCP.cpp) -------
+//---------- RÃ©alisation de la classe <DataTransfertTCP> (fichier DataTransfertTCP.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- Include système
+//-------------------------------------------------------- Include systÃšme
 using namespace std;
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <cstring>
+#include <errno.h>
 
 //------------------------------------------------------ Include personnel
 #include "DataTransfertTCP.h"
@@ -23,7 +25,7 @@ using namespace std;
 
 //------------------------------------------------------------------ PRIVE
 
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protégées
 
 void DataTransfertTCP::data_connect()
 {
@@ -58,7 +60,7 @@ void DataTransfertTCP::data_send(int id)
         fs.open(stream.GetImagePath(id).c_str());
         if (fs.fail())
         {
-            cerr << "La vid�o " << stream.GetImagePath(id).c_str() << " est introuvable." << endl;
+            cerr << "La vidéo " << stream.GetImagePath(id).c_str() << " est introuvable." << endl;
             exit(EXIT_FAILURE);
         }
 	}
@@ -68,7 +70,7 @@ void DataTransfertTCP::data_send(int id)
 	long filelength = fs.tellg();
 	fs.seekg(0, ios::beg);
 
-	// On alloue la mémoire :
+	// On alloue la mÃ©moire :
 	char* filebuffer = new char[filelength];
 
 	// On lit le fichier en bloc :
@@ -94,7 +96,7 @@ void DataTransfertTCP::data_send(int id)
 		long sent = send(sock, msg, msglength, 0);
 		if(sent == -1)
 		{
-		    cerr << "[" << sock << "] Erreur envoi de données (send)" << endl;
+		    cerr << "[" << sock << "] Erreur envoi de donnéees (send)" << endl;
 		    cerr << strerror(errno) << endl;
 		    break;
 		}

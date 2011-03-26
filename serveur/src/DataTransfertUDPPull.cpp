@@ -29,18 +29,18 @@ void* DataTransfertUDPPull::Begin()
     bool end = false;
     while (!end)
     {
-    	char[PIPE_SIZE] msg;
-        read(pipe, msg, PIPE_SIZE);
+    	char msg[PIPE_SIZE];
+        read(pipefd, msg, PIPE_SIZE);
         string cmd = msg;
-        if (cmd == "end")
+        if (cmd == "END")
         {
             end = true;
         }
         else
         {
-        	int image_id = atoi(cmd);
+        	int image_id = atoi(cmd.c_str());
         	if(image_id == -1) image_id = ++currentImage;
-            send(image_id);
+            data_send(image_id);
         }
     }
     data_disconnect();

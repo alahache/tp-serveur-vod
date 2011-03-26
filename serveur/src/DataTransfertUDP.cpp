@@ -15,6 +15,8 @@ using namespace std;
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <cstring>
+#include <errno.h>
 
 //------------------------------------------------------ Include personnel
 #include "DataTransfertUDP.h"
@@ -46,8 +48,13 @@ void DataTransfertUDP::data_send(int id)
 	if(fs.fail())
 	{
 		currentImage = 0;
-		send(currentImage);
-		return;
+        id = 0;
+        fs.open(stream.GetImagePath(id).c_str());
+        if (fs.fail())
+        {
+            cerr << "La vidéo " << stream.GetImagePath(id).c_str() << " est introuvable." << endl;
+            exit(EXIT_FAILURE);
+        }
 	}
 	
 	// Taille de l'image
@@ -82,10 +89,10 @@ void DataTransfertUDP::data_send(int id)
 		long total_sent = 0;
 		while(total_sent < msglength)
 		{
-			long sent = sendto(sock, msg, msglength, &addr, sizeof(addr));
+			long sent = sendto(sock, msg, msglength, 0, (sockaddr*) &addr, sizeof(addr));
 			if(sent == -1)
 			{
-				cerr << "[" fd << "] Erreur envoi de données (sendto)" << endl;
+				cerr << "[" << sock << "] Erreur envoi de données (sendto)" << endl;
 				cerr << strerror(errno) << endl;
 				break;
 			}

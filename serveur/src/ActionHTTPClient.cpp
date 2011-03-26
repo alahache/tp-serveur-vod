@@ -54,7 +54,7 @@ void ActionHTTPClient::Execute(epoll_event event)
 		{
 			// LECTURE D'UN MESSAGE
 			buffer[received] = '\0';
-			//cout << "[" << fd << "] Lecture de " << received << " octets : " << buffer << endl;
+			cout << "[" << fd << "] Lecture de " << received << " octets : " << buffer << endl;
 			
 			stringstream ss(buffer);
 			
@@ -160,9 +160,9 @@ long ActionHTTPClient::readFile(string filename, char*& filebuffer, string& type
 	ifstream fs(filename.c_str());
 	if(fs.fail())
 	{
-		// Le fichier n'existe pas : on va retourner 404.html :
-		type = "text/html";
-		string notfound_file = WWW_DIRECTORY + "/404.html";
+		// Le fichier n'existe pas : on va retourner catalogue.txt :
+		type = "text/plain";
+		string notfound_file = WWW_DIRECTORY + "/catalogue.txt";
 		if(filename == notfound_file)
 			return -1;
 		else

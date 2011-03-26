@@ -43,14 +43,14 @@ void ActionConnection::Execute(epoll_event event)
 	//cout << "[" << conn_sock << "] Nouveau client : " << inet_ntoa(client_addr.sin_addr) << endl;
 	
 	// On met le descripteur en "non bloquant" (cf. man epoll - EPOLLET) :
-	setNonBlocking(conn_sock);
+	//setNonBlocking(conn_sock);
 	
 	// On ajoute un nouveau client :
-	Action* actionClient = new ActionClient(io, *this, stream, conn_sock, client_addr.sin_addr);
+	Action* actionClient = new ActionClient(io, stream, conn_sock, *this , client_addr.sin_addr);
 	clients.push_back(actionClient);
 
 	// On ajoute le descripteur au gestionnaire d'e/s :
-	io.AddAction(conn_sock, actionClient, EPOLLIN | EPOLLET);
+	io.AddAction(conn_sock, actionClient, EPOLLIN);
 }
 
 void ActionConnection::RemoveClient(Action* client)
