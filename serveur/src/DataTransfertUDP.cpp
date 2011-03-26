@@ -31,7 +31,7 @@ void DataTransfertUDP::connect()
 	if(sock == -1)
 	{
 		cerr << "Erreur: socket" << endl;
-        exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 	
 	addr.sin_family = AF_INET;
@@ -85,9 +85,9 @@ void DataTransfertUDP::send(int id)
 			long sent = sendto(sock, msg, msglength, &addr, sizeof(addr));
 			if(sent == -1)
 			{
-			    cerr << "[" fd << "] Erreur envoi de données (sendto)" << endl;
-			    cerr << strerror(errno) << endl;
-			    break;
+				cerr << "[" fd << "] Erreur envoi de données (sendto)" << endl;
+				cerr << strerror(errno) << endl;
+				break;
 			}
 			total_sent += sent;
 		}
