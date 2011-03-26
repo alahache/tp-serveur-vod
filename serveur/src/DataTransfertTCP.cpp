@@ -54,8 +54,13 @@ void DataTransfertTCP::data_send(int id)
 	if(fs.fail())
 	{
 		currentImage = 0;
-		data_send(currentImage);
-		return;
+        id = 0;
+        fs.open(stream.GetImagePath(id).c_str());
+        if (fs.fail())
+        {
+            cerr << "La vidéo " << stream.GetImagePath(id).c_str() << " est introuvable." << endl;
+            exit(EXIT_FAILURE);
+        }
 	}
 
 	// Taille de l'image
