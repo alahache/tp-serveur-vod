@@ -66,7 +66,7 @@ void DataTransfertUDP::data_send(int id)
 	// Transfert des fragments :
 	int fragment_pos = 0;
 	while(!fs.eof())
-	{
+	{	
 		// Construction du header :
 		stringstream msg_header;
 		msg_header << id << CRLF;
@@ -74,23 +74,53 @@ void DataTransfertUDP::data_send(int id)
 		msg_header << fragment_pos << CRLF;
 		msg_header << fragmentSize << CRLF;
 		string str_header = msg_header.str();
-		
+	
 		// On va lire le bon fragment d'image :
-		long imgfraglength = fragmentSize - str_header.size();
-		char* filebuffer = new char[imgfraglength];
-		fs.read(filebuffer, imgfraglength);
+		long imgfrag_maxlength = fragmentSize - str_header.size();
+		char* filebuffer = new char[imgfrag_maxlength];
+		fs.read(filebuffer, imgfrag_maxlength);
+		long imgfrag_readlength = fs.gcount();
+		
+		long fraglength = imgfrag_readlength + str_header.size();
+		
+		// Si jamais on envoie moins d'octets que prévu, on modifie le header :
+		if(fraglength < fragmentSize)
+		{
+			// On construit la chaîne fragmentSize :
+			stringstream ss_fragmentSize;
+			ss_fragmentSize << fragmentSize;
+			string str_fragmentSize = ss_fragmentSize.str();
+			
+			// Puis la chaîne fraglength
+			stringstream ss_fraglength;
+			ss_fraglength << fraglength;
+			string str_fraglength = ss_fraglength.str();
+			
+			// On va compléter avec des zéros pour ne pas modifier la taille du header :
+			stringstream newFragmentSize;
+			for(int i=0; i<(str_fragmentSize.size() - str_fraglength.size()); i++)
+				newFragmentSize << '0';
+			newFragmentSize << str_fraglength;
+			string str_newFragmentSize = newFragmentSize.str();
+			
+			// On va remplacer le fragmentSize dans le header par str_new_fragsize
+			string str_find 	= CRLF + str_fragmentSize + CRLF;
+			string str_replace 	= CRLF + str_newFragmentSize + CRLF;
+			str_header.replace(str_header.find(str_find), str_replace.size(), str_replace);
+		}
+		
+		cout << str_header << endl;
 		
 		// Assembage header + buffer :
-		long msglength = imgfraglength + str_header.size();
-		char* msg = new char[msglength];
+		char* msg = new char[fraglength];
 		memcpy(msg, str_header.c_str(), str_header.size());
-		memcpy(msg + str_header.size(), filebuffer, imgfraglength);
+		memcpy(msg + str_header.size(), filebuffer, imgfrag_readlength);
 		
 		// Envoi du message :
 		long total_sent = 0;
-		while(total_sent < msglength)
+		while(total_sent < fraglength)
 		{
-			long sent = sendto(sock, msg, msglength, 0, (sockaddr*) &addr, sizeof(addr));
+			long sent = sendto(sock, msg, fraglength, 0, (sockaddr*) &addr, sizeof(addr));
 			if(sent == -1)
 			{
 				cerr << "[" << sock << "] Erreur envoi de données (sendto)" << endl;
@@ -100,10 +130,12 @@ void DataTransfertUDP::data_send(int id)
 			total_sent += sent;
 		}
 		
+		cout << "sent : " << total_sent << endl;
+		
 		delete[] msg;
 		delete[] filebuffer;
 		
-		fragment_pos+=imgfraglength;
+		fragment_pos+=imgfrag_readlength;
 	}
 
 	// On ferme le fichier :
