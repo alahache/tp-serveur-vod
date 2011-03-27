@@ -39,6 +39,7 @@ void DataTransfertUDP::data_connect()
 	addr.sin_family = AF_INET;
 	addr.sin_addr 	= clientAddress;
 	addr.sin_port 	= htons(clientPort);
+	
 }
 
 void DataTransfertUDP::data_send(int id)
@@ -101,6 +102,8 @@ void DataTransfertUDP::data_send(int id)
 		
 		delete[] msg;
 		delete[] filebuffer;
+		
+		fragment_pos+=imgfraglength;
 	}
 
 	// On ferme le fichier :

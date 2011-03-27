@@ -10,8 +10,12 @@
 #define ACTIONCLIENT_H
 
 //--------------------------------------------------- Interfaces utilisées
+#include <string>
+#include <map>
 #include <netinet/in.h>
-#include <arpa/inet.h>			// addr_in
+#include <sys/types.h>
+#include <arpa/inet.h>			// in_addr
+#include <sys/socket.h>
 #include <pthread.h>
 
 #include "Action.h"
@@ -21,7 +25,24 @@
 #include "DataTransfert.h"
 
 //------------------------------------------------------------- Constantes
-//const unsigned int BUFFER_SIZE = 768;
+const unsigned int MSG_BUFFER_SIZE = 768;
+
+//------------------------------------------------------------------ Types 
+struct Client
+{
+	// Adresse :
+	in_addr clientAddress;			// Adresse du client
+	unsigned int clientPort;		// Port d'écoute du client
+	
+	// Transfert :
+	bool transfertStarted;			// Vrai si le transfert a commencé
+	DataTransfert *transfert;		// Transfert du flux
+	pthread_t transfertThread;		// Thread utilisé lors du transfert
+	int pipefd;						// Descripteur en écriture du pipe
+	unsigned long fragmentSize;		// Taille du fragment pour un transfert UDP
+	
+	Client() : transfertStarted(false) { }
+};
 
 //------------------------------------------------------------------------ 
 // Rôle de la classe <ActionClient>
@@ -41,51 +62,43 @@ public:
 	//	- Méthode redéfinie appelée lorsqu'un client effectue une
 	//	  opération de lecture / écriture sur le descripteur <fd>.
     
-	void Disconnect();
+	void Disconnect(std::string client_addr);
 	// Mode d'emploi :
 	//	- Permet de déconnecter un client du serveur.
+	
+	void SetTCPClient(sockaddr_in _tcpClientAddr, ActionConnection* _connection);
+	// Mode d'emploi :
+	//	- Permet de d'initaliser le client TCP
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	ActionClient(IOControl& _io, Stream& _stream, int _fd, ActionConnection& _connection = *((ActionConnection*) NULL), in_addr _clientAddress = in_addr())
-		: Action(_io), connection(_connection), stream(_stream), fd(_fd), clientAddress(_clientAddress), transfertStarted(false) {}
+	ActionClient(IOControl& _io, Stream* _stream, int _fd)
+		: Action(_io), stream(_stream), fd(_fd) { }
     // Mode d'emploi :
     //	<_io>				: Gestionnaire d'e/s
-    //	<_connection>		: Action gérant la connexion des clients
     //	<_stream>			: Flux associé à la connexion
     //	<_fd>				: Descripteur de la connexion du client
-    //	<_clientAddress>	: Adresse du client
     //
     //	- Construit une nouvelle instance de ActionClient.
-    
-    virtual ~ActionClient();
-    // Mode d'emploi :
-    //	- Détruit l'instance de ActionClient
 
 //------------------------------------------------------------------ PRIVE 
 
 protected:
 //----------------------------------------------------- Méthodes protégées
+	std::string addrToKey(sockaddr_in addr);
 
 //----------------------------------------------------- Attributs protégés
-	// Transfert :
-	bool transfertStarted;			// Vrai si le transfert a commencé
-	DataTransfert *transfert;		// Transfert du flux
-	pthread_t transfertThread;		// Thread utilisé lors du transfert
-	int pipefd;						// Descripteur en écriture du pipe
-	
-	// Client :
-	int fd;							// Descripteur de la connexion du client
-	ActionConnection& connection;	// Action de connexion des clients
-	in_addr clientAddress;			// Adresse du client
-	unsigned int clientPort;		// Port d'écoute du client
-	
 	// Flux :
-	Stream& stream;					// Flux associé à la connexion
-	int videoId;					// ID de la vidéo à envoyer
-	unsigned long fragmentSize;		// Taille du fragment pour un transfert UDP
+	Stream* stream;							// Flux associé à la connexion
+	int videoId;							// ID de la vidéo à envoyer
 
-
+	// Connexion :
+	int fd;									// socket associée à la connexion
+	std::map<std::string, Client> clients;	// Liste des clients connectés à la socket
+	
+	// Connexion TCP :
+	ActionConnection* connection;			// Action de connexion des clients
+	std::string tcp_client;					// Adresse du client TCP
 };
 
 #endif // ACTIONCLIENT_H

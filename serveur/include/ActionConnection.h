@@ -46,7 +46,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	ActionConnection(IOControl& _io, Stream& _stream)
+	ActionConnection(IOControl& _io, Stream* _stream)
 		: Action(_io), stream(_stream) { }
 	// Mode d'emploi :
 	//	<_io>			: Gestionnaire d'e/s
@@ -72,7 +72,7 @@ protected:
 
 //----------------------------------------------------- Attributs protégés
 	std::list<Action*> clients;		// Liste des clients connectés
-	Stream& stream;					// Flux associé à la connexion
+	Stream* stream;					// Flux associé à la connexion
 
 };
 

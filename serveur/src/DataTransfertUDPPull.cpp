@@ -41,6 +41,7 @@ void* DataTransfertUDPPull::Begin()
         	int image_id = atoi(cmd.c_str());
         	if(image_id == -1) image_id = ++currentImage;
             data_send(image_id);
+            cout << "envoyé : "<<image_id << endl;
         }
     }
     data_disconnect();

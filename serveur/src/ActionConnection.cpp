@@ -46,7 +46,8 @@ void ActionConnection::Execute(epoll_event event)
 	//setNonBlocking(conn_sock);
 	
 	// On ajoute un nouveau client :
-	Action* actionClient = new ActionClient(io, stream, conn_sock, *this , client_addr.sin_addr);
+	ActionClient* actionClient = new ActionClient(io, stream, conn_sock);
+	actionClient->SetTCPClient(client_addr, this);
 	clients.push_back(actionClient);
 
 	// On ajoute le descripteur au gestionnaire d'e/s :

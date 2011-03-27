@@ -118,14 +118,14 @@ void Stream::connectUDP()
 		addr.sin_addr.s_addr = htonl(INADDR_ANY);		// htonl : convertit un long vers le format réseau
 		addr.sin_port = htons(port);					// htons : convertit un short vers le format réseau
 		
-	if(bind(s, (struct sockaddr *) &addr, sizeof(addr)) == -1)
+	if(bind(s, (sockaddr *) &addr, sizeof(addr)) == -1)
 	{
 		cerr << "bind" << endl;
 		exit(EXIT_FAILURE);
 	}
 	
 	// On va créer une action pour gérer l'envoi des messages des clients :
-	connection = new ActionClient(io, *this, s);
+	connection = new ActionClient(io, this, s);
 	
 	// On ajoute la socket et l'action au gestionnaire d'e/s :
 	io.AddAction(s, connection, EPOLLIN);
@@ -165,7 +165,7 @@ void Stream::connectTCP()
 	}
 	
 	// On va créer une action pour gérer la connexion des clients :
-	connection = new ActionConnection(io, *this);
+	connection = new ActionConnection(io, this);
 	
 	// On ajoute la socket et l'action au gestionnaire d'e/s :
 	io.AddAction(s, connection, EPOLLIN);
