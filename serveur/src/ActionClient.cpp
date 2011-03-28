@@ -5,7 +5,7 @@
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
-//---------- Réalisation de la classe <ActionClient> (fichier ActionClient.cpp) -------
+//---------- Réalisation de la classe <ActionClient> (fichier Actionclient->cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -40,26 +40,30 @@ void ActionClient::Execute(epoll_event event)
 		// DEMANDE DE LECTURE
 		//cout << "[" << fd << "] Réception d'une requête de lecture..." << endl;
 		
+		sockaddr_in addr;
 		string client_addr;
+		Client* client;
 		
 		// On va recevoir le message différement selon qu'on soit en UDP ou TCP :
 		int received;
 		if(stream->GetProtocol() == UDP_PULL || stream->GetProtocol() == UDP_PUSH)
 		{
-			sockaddr_in addr;
 			int addrsize = sizeof(addr);
 			received = recvfrom(fd, buffer, MSG_BUFFER_SIZE, 0, (sockaddr*) &addr, (socklen_t*) &addrsize);
 			client_addr = addrToKey(addr);
-			cout << client_addr << endl;
+			
+			// On récupère le client associé :
+			client = &clients[client_addr];
+				client->clientAddress=addr.sin_addr;
 		}
 		else if(stream->GetProtocol() == TCP_PULL || stream->GetProtocol() == TCP_PUSH)
 		{
 			received = recv(fd, buffer, MSG_BUFFER_SIZE, 0);
+			
+			// On récupère le client associé :
 			client_addr = tcp_client;
+			client = &clients[client_addr];
 		}
-		
-		// On récupère le client associé :
-		Client& client = clients[client_addr];
 		
 		if(received > 0)
 		{
@@ -77,7 +81,7 @@ void ActionClient::Execute(epoll_event event)
 				string command;
 				sline >> command;
 				
-				bool transfertStarted = client.transfertStarted;
+				bool transfertStarted = client->transfertStarted;
 				if(!transfertStarted)
 				{
 					// DEBUT DU TRANSFERT
@@ -89,12 +93,12 @@ void ActionClient::Execute(epoll_event event)
 					}
 					else if(command == "fragment_size" || command == "FRAGMENT_SIZE")
 					{
-						sline >> client.fragmentSize;
+						sline >> client->fragmentSize;
 						beginTransfert = true;
 					}
 					else if(command == "listen_port" || command == "LISTEN_PORT")
 					{
-						sline >> client.clientPort;
+						sline >> client->clientPort;
 						if(stream->GetProtocol() == TCP_PULL || stream->GetProtocol() == TCP_PUSH)
 							beginTransfert = true;
 					}
@@ -108,7 +112,7 @@ void ActionClient::Execute(epoll_event event)
 						if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
 							flags = flags | O_NONBLOCK;
 						pipe2(pipefds, flags);
-						client.pipefd = pipefds[1];
+						client->pipefd = pipefds[1];
 					
 						// On va créer le transfert :
 						if(stream->GetProtocol() == TCP_PUSH)
@@ -117,7 +121,7 @@ void ActionClient::Execute(epoll_event event)
 						}
 						else if(stream->GetProtocol() == TCP_PULL)
 						{
-							client.transfert = new DataTransfertTCPPull(*stream, client.clientAddress, client.clientPort, pipefds[0]);
+							client->transfert = new DataTransfertTCPPull(*stream, client->clientAddress, client->clientPort, pipefds[0]);
 						}
 						else if(stream->GetProtocol() == UDP_PUSH)
 						{
@@ -125,18 +129,18 @@ void ActionClient::Execute(epoll_event event)
 						}
 						else if(stream->GetProtocol() == UDP_PULL)
 						{
-							client.transfert = new DataTransfertUDPPull(*stream, client.clientAddress, client.clientPort, client.fragmentSize, pipefds[0]);
+							client->transfert = new DataTransfertUDPPull(*stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
 						}
 						
 						// On va enfin créer un nouveau thread qui partira de ce transfert :
-						int err = pthread_create(&(client.transfertThread), NULL, client.transfert->BeginThread, client.transfert);
+						int err = pthread_create(&(client->transfertThread), NULL, client->transfert->BeginThread, client->transfert);
 						if(err)
 						{
 							cerr << "Erreur : pthread_create" << endl;
 							Disconnect(client_addr);
 						}
 						
-						client.transfertStarted = true;
+						client->transfertStarted = true;
 					}
 					
 				} // -- début du transfert
@@ -148,8 +152,8 @@ void ActionClient::Execute(epoll_event event)
 					{
 						// DECONNEXION
 						string pipecmd = "END";
-						write(client.pipefd, pipecmd.c_str(), pipecmd.size()+1);
-						int err = pthread_join(client.transfertThread, NULL);
+						write(client->pipefd, pipecmd.c_str(), pipecmd.size()+1);
+						int err = pthread_join(client->transfertThread, NULL);
 						if(err)
 						{
 							cerr << "Erreur : pthread_join" << endl;
@@ -165,7 +169,7 @@ void ActionClient::Execute(epoll_event event)
 						{
 							string image_id;
 							sline >> image_id;
-							write(client.pipefd, image_id.c_str(), image_id.size()+1);
+							write(client->pipefd, image_id.c_str(), image_id.size()+1);
 						}
 						
 					} // -- commande pull
@@ -176,21 +180,21 @@ void ActionClient::Execute(epoll_event event)
 						if(command == "start" || command == "START")
 						{
 							string pipecmd = "START";
-							write(client.pipefd, pipecmd.c_str(), pipecmd.size()+1);
+							write(client->pipefd, pipecmd.c_str(), pipecmd.size()+1);
 						}
 						else if(command == "pause" || command == "PAUSE")
 						{
 							string pipecmd = "PAUSE";
-							write(client.pipefd, pipecmd.c_str(), pipecmd.size()+1);
+							write(client->pipefd, pipecmd.c_str(), pipecmd.size()+1);
 						}
 						else if(command == "alive" || command == "ALIVE")
 						{
 							string pipecmd = "ALIVE";
-							write(client.pipefd, pipecmd.c_str(), pipecmd.size()+1);
+							write(client->pipefd, pipecmd.c_str(), pipecmd.size()+1);
 						}
 						else if(command == "listen_port" || command == "LISTEN_PORT")
 						{
-							sline >> client.clientPort;
+							sline >> client->clientPort;
 							// TODO : récréer le transfert avec le port listenPort
 						}
 						
@@ -235,7 +239,6 @@ void ActionClient::SetTCPClient(sockaddr_in _tcpClientAddr, ActionConnection* _c
 	connection = _connection;
 	
 	tcp_client = addrToKey(_tcpClientAddr);
-	cout << tcp_client << endl;
 	clients[tcp_client].clientAddress = _tcpClientAddr.sin_addr;
 }
 

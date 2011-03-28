@@ -54,7 +54,7 @@ void ActionHTTPClient::Execute(epoll_event event)
 		{
 			// LECTURE D'UN MESSAGE
 			buffer[received] = '\0';
-			cout << "[" << fd << "] Lecture de " << received << " octets : " << buffer << endl;
+			//cout << "[" << fd << "] Lecture de " << received << " octets : " << buffer << endl;
 			
 			stringstream ss(buffer);
 			
