@@ -48,19 +48,6 @@ void* DataTransfertTCPPull::Begin()
     return 0;
 }
 
-
-//------------------------------------------------- Surcharge d'opérateurs
-
-//-------------------------------------------- Constructeurs - destructeur
-
-DataTransfertTCPPull::~DataTransfertTCPPull ( )
-// Algorithme :
-//
-{
-
-} //----- Fin de ~DataTransfertTCPPull
-
-
 //------------------------------------------------------------------ PRIVE
 
 //----------------------------------------------------- Méthodes protégées

@@ -4,7 +4,7 @@ CC=g++
 EXEC_NAME=serveur_vod
 INCLUDES=-I $(INC_DIR)
 LIBS=-lpthread
-OBJ_FILES=DataTransfertTCP.o DataTransfertTCPPull.o DataTransfertUDP.o DataTransfertUDPPull.o IOControl.o ActionConnection.o ActionClient.o ActionCommand.o Stream.o ActionHTTPConnection.o ActionHTTPClient.o Server.o Main.o
+OBJ_FILES=DataTransfertTCP.o DataTransfertTCPPull.o DataTransfertTCPPush.o DataTransfertUDP.o DataTransfertUDPPull.o IOControl.o ActionConnection.o ActionClient.o ActionCommand.o Stream.o ActionHTTPConnection.o ActionHTTPClient.o Server.o Main.o
 OPT_CMP=-c -ggdb
 OPT_EDL=-o
 

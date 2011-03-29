@@ -86,6 +86,7 @@ public:
 protected:
 //----------------------------------------------------- Méthodes protégées
 	std::string addrToKey(sockaddr_in addr);
+	void setNonBlocking(int fd);
 
 //----------------------------------------------------- Attributs protégés
 	// Flux :

@@ -47,7 +47,7 @@ public:
 	// Mode d'emploi :
 	//	- Retourne le protocole du flux
 	
-	float GetIps();
+	float GetFps();
 	// Mode d'emploi :
 	//	- Retourne le nombre d'images par secondes de la vidéo
 	
@@ -65,7 +65,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	Stream(IOControl& _io, int _port, Protocol _protocol, std::string _name, VideoType _type, float _ips);
+	Stream(IOControl& _io, int _port, Protocol _protocol, std::string _name, VideoType _type, float _fps);
 	// Mode d'emploi :
 	//	- Construit un nouveau flux
 	//	- Ouvre une nouvelle connexion de contrôle TCP/IP
@@ -94,7 +94,7 @@ protected:
 	Protocol protocol;				// Protocole utilisé pour les échanges
 	std::string name;				// Nom de la vidéo
 	VideoType type;					// Type d'images de la vidéo
-	float ips;						// Nombre d'images par secondes
+	float fps;						// Nombre d'images par secondes
 
 };
 

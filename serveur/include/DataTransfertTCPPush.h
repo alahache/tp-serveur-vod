@@ -1,22 +1,23 @@
 /*************************************************************************
                            DataTransfertTCPPush  -  description
                              -------------------
-    début                : ...
-    copyright            : (C) 2011 par Pierre LULÉ
+    dÃ©but                : ...
+    copyright            : (C) 2011 par Pierre LULÃ‰
 *************************************************************************/
 
 //---------- Interface de la classe <DataTransfertTCPPush> (fichier DataTransfertTCPPush.h) ------
 #if ! defined ( DATATRANSFERTTCPPUSH_H )
 #define DATATRANSFERTTCPPUSH_H
 
-//--------------------------------------------------- Interfaces utilisées
+//--------------------------------------------------- Interfaces utilisÃ©es
+#include "DataTransfertTCP.h"
 
 //------------------------------------------------------------- Constantes 
 
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <DataTransfertTCPPush>
+// RÃ´le de la classe <DataTransfertTCPPush>
 //
 //
 //------------------------------------------------------------------------ 
@@ -26,41 +27,34 @@ class DataTransfertTCPPush : public DataTransfertTCP
 //----------------------------------------------------------------- PUBLIC
 
 public:
-//----------------------------------------------------- Méthodes publiques
-    // type Méthode ( liste des paramètres );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+//----------------------------------------------------- MÃ©thodes publiques
 
+	void* Begin();
 
-//------------------------------------------------- Surcharge d'opérateurs
+//------------------------------------------------- Surcharge d'opÃ©rateurs
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    DataTransfertTCPPush (  Stream& stream, sockaddr_in address, int port, int& pipe, int _frgmt_size ) :
-        DataTransfertTCP(stream, address, port, &pipe), frgmt_size(_frgmt_size){}
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    virtual ~DataTransfertTCPPush ( );
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
+	DataTransfertTCPPush(Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd)
+    	: DataTransfertTCP(_stream, _clientAddress, _clientPort), pipefd(_pipefd) {}
+	// Mode d'emploi :
+	//
+	// Contrat :
+	//
 
 //------------------------------------------------------------------ PRIVE 
 
 protected:
-//----------------------------------------------------- Méthodes protégées
+//----------------------------------------------------- MÃ©thodes protÃ©gÃ©es
+	void setNonBlocking(int fd);
+	void setBlocking(int fd);
 
-//----------------------------------------------------- Attributs protégés
-    int frgmt_size;
+//----------------------------------------------------- Attributs protÃ©gÃ©s
+	int pipefd;					// Descripteur de lecture pour le pipe
+    
 };
 
-//--------------------------- Autres définitions dépendantes de <DataTransfertTCPPush>
+//--------------------------- Autres dÃ©finitions dÃ©pendantes de <DataTransfertTCPPush>
 
 #endif // DATATRANSFERTTCPPUSH_H
 

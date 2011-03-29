@@ -50,7 +50,7 @@ public:
 //-------------------------------------------- Constructeurs - destructeur
 
 	DataTransfert(Stream& _stream)
-	: stream(_stream), currentImage(0) {};
+		: stream(_stream), currentImage(0) {};
 	// Mode d'emploi :
 	// 	<_stream>			: référence vers le flux associé au transfert
 	//

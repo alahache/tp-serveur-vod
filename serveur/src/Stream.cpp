@@ -37,9 +37,9 @@ Protocol Stream::GetProtocol()
 	return protocol;
 }
 
-float Stream::GetIps()
+float Stream::GetFps()
 {
-	return ips;
+	return fps;
 }
 
 string Stream::GetImagePath(int i)
@@ -73,8 +73,8 @@ void Stream::Close()
 
 //-------------------------------------------- Constructeurs - destructeur
 
-Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, VideoType _type, float _ips)
-	: io(_io), port(_port), protocol(_protocol), name(_name), type(_type), ips(_ips)
+Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, VideoType _type, float _fps)
+	: io(_io), port(_port), protocol(_protocol), name(_name), type(_type), fps(_fps)
 {
 
 	if(protocol == UDP_PULL || protocol == UDP_PUSH)

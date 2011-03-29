@@ -20,6 +20,7 @@ using namespace std;
 //------------------------------------------------------ Include personnel
 #include "ActionClient.h"
 #include "DataTransfertTCPPull.h"
+#include "DataTransfertTCPPush.h"
 #include "DataTransfertUDPPull.h"
 
 //----------------------------------------------------------------- PUBLIC
@@ -113,12 +114,14 @@ void ActionClient::Execute(epoll_event event)
 						//	flags = flags | O_NONBLOCK;
 						//pipe2(pipefds, flags);
 						pipe(pipefds);
+						if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
+							setNonBlocking(pipefds[1]);
 						client->pipefd = pipefds[1];
 					
 						// On va créer le transfert :
 						if(stream->GetProtocol() == TCP_PUSH)
 						{
-							//transfert = new DataTransfertTCPPush(stream, clientAddress, clientPort, pipefds[0]);
+							client->transfert = new DataTransfertTCPPush(*stream, client->clientAddress, client->clientPort, pipefds[0]);
 						}
 						else if(stream->GetProtocol() == TCP_PULL)
 						{
@@ -126,7 +129,7 @@ void ActionClient::Execute(epoll_event event)
 						}
 						else if(stream->GetProtocol() == UDP_PUSH)
 						{
-							//transfert = new DataTransfertUDPPush(stream, clientAddress, clientPort, pipefds[0], fragmentSize);
+							//client->transfert = new DataTransfertUDPPull(*stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
 						}
 						else if(stream->GetProtocol() == UDP_PULL)
 						{
@@ -256,4 +259,10 @@ string ActionClient::addrToKey(sockaddr_in addr)
 	ss << inet_ntoa(addr.sin_addr);
 	ss << ":" << ntohs(addr.sin_port);
 	return ss.str();
+}
+
+void ActionClient::setNonBlocking(int fd)
+{
+	int flags = fcntl(fd, F_GETFL, 0);
+	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }

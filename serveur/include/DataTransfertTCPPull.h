@@ -35,14 +35,8 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    DataTransfertTCPPull (Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd)
+    DataTransfertTCPPull(Stream& _stream, in_addr _clientAddress, int _clientPort, int _pipefd)
     	: DataTransfertTCP(_stream, _clientAddress, _clientPort), pipefd(_pipefd) {}
-    // Mode d'emploi :
-    //
-    // Contrat :
-    //
-
-    virtual ~DataTransfertTCPPull ( );
     // Mode d'emploi :
     //
     // Contrat :
