@@ -22,6 +22,7 @@ using namespace std;
 #include "DataTransfertTCPPull.h"
 #include "DataTransfertTCPPush.h"
 #include "DataTransfertUDPPull.h"
+#include "DataTransfertUDPPush.h"
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -129,7 +130,7 @@ void ActionClient::Execute(epoll_event event)
 						}
 						else if(stream->GetProtocol() == UDP_PUSH)
 						{
-							//client->transfert = new DataTransfertUDPPull(*stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
+							client->transfert = new DataTransfertUDPPush(*stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
 						}
 						else if(stream->GetProtocol() == UDP_PULL)
 						{
