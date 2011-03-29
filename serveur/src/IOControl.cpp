@@ -18,6 +18,7 @@ using namespace std;
 #include "IOControl.h"
 
 //------------------------------------------------------------- Constantes
+#define NB_EPOLL 100
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -90,7 +91,8 @@ void IOControl::RemoveAction(int fd)
 IOControl::IOControl()
 {
 	// On crée le descripteur epfd gérant l'epoll :
-	epfd = epoll_create1(0);
+	//epfd = epoll_create1(0);
+	epfd = epoll_create(NB_EPOLL);
 	if(epfd < 0)
 	{
 		cerr << "Erreur : epoll_create" << endl;

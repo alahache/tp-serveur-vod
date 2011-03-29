@@ -69,7 +69,10 @@ void ActionHTTPClient::Execute(epoll_event event)
 				if(att == "GET")
 				{
 					// Le client veut récupérer un fichier :
-					filename = WWW_DIRECTORY + val;
+					if(val == "/" || val == "")
+						filename = WWW_DIRECTORY + "catalogue.txt";
+					else
+						filename = WWW_DIRECTORY + val;
 					
 					// On vérifie le type du fichier :
 					type = "text/plain";
@@ -159,7 +162,7 @@ long ActionHTTPClient::readFile(string filename, char*& filebuffer, string& type
 	// On va tenter de récupérer le contenu de ce fichier :
 	ifstream fs(filename.c_str());
 	if(fs.fail())
-	{
+	{	
 		// Le fichier n'existe pas : on va retourner catalogue.txt :
 		type = "text/plain";
 		string notfound_file = WWW_DIRECTORY + "/catalogue.txt";

@@ -108,10 +108,11 @@ void ActionClient::Execute(epoll_event event)
 					{
 						// On va créer le pipe de communication avec le thread :
 						int pipefds[2];
-						int flags = 0;
-						if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
-							flags = flags | O_NONBLOCK;
-						pipe2(pipefds, flags);
+						//int flags = 0;
+						//if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
+						//	flags = flags | O_NONBLOCK;
+						//pipe2(pipefds, flags);
+						pipe(pipefds);
 						client->pipefd = pipefds[1];
 					
 						// On va créer le transfert :

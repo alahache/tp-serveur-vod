@@ -109,7 +109,9 @@ void DataTransfertUDP::data_send(int id)
 			// On va remplacer le fragmentSize dans le header par str_new_fragsize
 			string str_find 	= CRLF + str_currentFragmentSize + CRLF;
 			string str_replace 	= CRLF + str_newCurrentFragmentSize + CRLF;
-			str_header.replace(str_header.find(str_find), str_replace.size(), str_replace);
+			str_header.replace(str_header.rfind(str_find), str_replace.size(), str_replace);
+			
+			currentFragmentSize = imgfrag_readlength;
 		}
 		
 		// Assembage header + buffer :
