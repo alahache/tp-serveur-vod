@@ -8,3 +8,6 @@
 
 #Ignorer l'exécutable du serveur
 serveur/serveur_vod
+
+#Ignorer les vidéos
+serveur/videos

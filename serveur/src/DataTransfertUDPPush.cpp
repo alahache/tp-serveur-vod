@@ -31,11 +31,10 @@ using namespace std;
 void* DataTransfertUDPPush::Begin()
 {
 	// On calcule l'intervale en secondes entre 2 images  :
-	unsigned int interval = 1000000/stream.GetFps();
-	unsigned int sleeping_time;
-	unsigned int timestamp_before;
-	unsigned int timestamp_after;
-	timeval time;
+	long interval = 1000000/stream.GetFps();
+	long sleeping_time;
+	timeval timestamp_before;
+	timeval timestamp_after;
 	char msg[PIPE_SIZE];
 	string cmd;
 
@@ -72,21 +71,19 @@ void* DataTransfertUDPPush::Begin()
 		}
 		
 		// On prends le timestamp avant l'envoi :
-		gettimeofday(&time, NULL);
-		timestamp_before = time.tv_usec;
+		gettimeofday(&timestamp_before, NULL);
 		
 		// On envoie l'image courante :
 		data_send(++currentImage);
 		
 		// On prends le timestamp après l'envoi :
-		gettimeofday(&time, NULL);
-		timestamp_after = time.tv_usec;
+		gettimeofday(&timestamp_after, NULL);
 		
 		// On récupère le temps à attendre avant la prochaine image :
-		sleeping_time = interval - (timestamp_after - timestamp_before);
+		sleeping_time = interval - ((timestamp_after.tv_sec - timestamp_before.tv_sec)*1000000 + (timestamp_after.tv_usec - timestamp_before.tv_usec));
 		
 		// on dort :
-		usleep(sleeping_time);
+		if(sleeping_time > 0) usleep(sleeping_time);
 		
 	}
 	data_disconnect();

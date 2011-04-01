@@ -17,7 +17,7 @@
 //------------------------------------------------------------------ Types 
 
 //------------------------------------------------------------------------ 
-// Rôle de la classe <DataTransfertUDPPull>
+// Rôle de la classe <DataTransfertUDPPush>
 //	- Implémentation de DataTransfertUDP pour le protocole Push
 //	- Les images sont envoyées au client automatiquement en respectant
 //	  le fps du flux.
@@ -47,7 +47,7 @@ public:
 	// 	<_fragmentSize>		: taille des fragments de données envoyés
 	// 	<_pipefd>			: descripeur du pipe en lecture
 	//
-	//	- Construit une nouvelle instance de la classe DataTransfertUDP.
+	//	- Construit une nouvelle instance de la classe DataTransfertUDPPush.
 
 //------------------------------------------------------------------ PRIVE 
 

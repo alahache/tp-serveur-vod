@@ -115,8 +115,8 @@ void ActionClient::Execute(epoll_event event)
 						//	flags = flags | O_NONBLOCK;
 						//pipe2(pipefds, flags);
 						pipe(pipefds);
-						if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
-							setNonBlocking(pipefds[1]);
+						//if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
+						//	setNonBlocking(pipefds[1]);
 						client->pipefd = pipefds[1];
 					
 						// On va créer le transfert :
