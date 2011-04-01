@@ -1,6 +1,26 @@
-----------------------------------------------------
+-----------------------------------------------------
  Serveur VOD
-----------------------------------------------------
+-----------------------------------------------------
+	- Descrition du projet :
+		Création d'un serveur de VOD gérant plusieurs
+		protocoles.
 
-	Projet C++ : Création d'un serveur de VOD
-gérant plusieurs protocoles, dont UDP, TCP.
+	- Protocoles supportés :
+		TCP PUSH
+		TCP PULL
+		UDP PUSH
+		UDP PULL
+		IP MCAST
+		
+	- Format d'image supportés :
+		BMP
+		JPEG
+		
+-----------------------------------------------------
+ MODE D'EMPLOI
+-----------------------------------------------------
+	- Lancer le serveur :
+		./serveur_vod [config.conf]
+	
+	- Arrêter le serveur :
+		> exit
