@@ -1,0 +1,93 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage{verbatim}
+\usepackage{geometry}
+\usepackage[francais]{babel}
+\usepackage{graphicx}
+
+\geometry{hmargin=30pt, vmargin=75pt}
+\setcounter{secnumdepth}{1}
+
+\title{Documentation du serveur de vidéo à la demande}
+\date{Avril 2011}
+\author{Arnaud LAHACHE \& Pierre LULÉ (B3250)}
+
+\begin{document}
+\maketitle
+
+\section{Introduction et fonctionnement}
+
+Le serveur de vidéo à la demande permet de diffuser à plusieurs clients des vidéos. Il fonctionne sous GNU/Linux.
+
+Il gère les protocoles TCP Push et Pull, UDP Push et Pull et Broadcast.
+
+Une transaction se passe ainsi : un client se connecte et demande par http le catalogue des vidéos disponibles sur le serveur. Pour lire une vidéo, il effectuera une demande sur le port indiqué par le catalogue en indiquant sur quel port il souhaite le recevoir.
+
+
+
+\section{Execution}
+\verb+./serveur_vod [fichier.conf]+
+
+\subsection{Utilisation}
+Il est possible de spécifier un fichier de configuration spécifique à l'éxecution en l'indiquant en paramètre. Par défaut, le fichier utilisé sera \verb+./config/serveur.conf+.
+
+Une fois lancé, le serveur offre à l'utilisateur une invite de commande. Cette invite de commande permet d'arrêter proprement le serveur par la commande \verb+quit+ ou \verb+exit+.
+
+En cas de commande inconnue, le serveur indiquera l'erreur «\verb+Erreur : Commande inconnue+» et continuera l'exécution.
+
+\subsection{Erreurs}
+En cas de problème de connection avec un client, le serveur s'arrêtera en indiquant l'erreur rencontrée sur la sortie d'erreur.
+
+\section{Configuration}
+
+\subsection{serveur.conf}
+La configuration du serveur se fait par le biais d'un fichier formaté ainsi :
+
+{
+\footnotesize
+\begin{verbatim}
+httpport=<port http>
+
+video=id:<id> name:<nom> type:<format> port:<port> protocol:<protocole> ips:<images par seconde> [address=<adresse multicast>]
+video=id:<id> name:<nom> type:<format> port:<port> protocol:<protocole> ips:<images par seconde> [address=<adresse multicast>]
+(...)
+\end{verbatim}
+}
+
+Où :
+\begin{description}
+ \item [Le port http] est le port sur lequel les transactions de catalogue se feront.
+ \item [L'id] est l'identificateur de la vidéo et doit être unique pour chaque vidéo.
+ \item [Le nom] est le nom qui apparaîtra à l'utilisateur du client.
+ \item [Le type] est le format d'image composant la vidéo. Cela peut être : \verb+JPEG+ ou \verb+BMP+.
+ \item [Le port] est le port sur lequel le client effectuera la demande pour la vidéo concernée. Il doit être unique pour chaque vidéo. %toujours vrai hein ?
+ \item [Le protocole] est le protocole concerné par la vidéo. Cela peut être : \verb+TCP_PULL+, \verb+UDP_PULL+, \verb+TCP_PUSH+, \verb+UDP_PUSH+ ou \verb+MCAST_PUSH+.
+ \item [Le nombre d'image par seconde] est la vitesse de défilement des images de la vidéo.
+ \item [Address] est l'adresse à laquelle sera diffusée une vidéo multicast. Ce paramêtre n'est valable que pour le protocole \verb+MCAST_PUSH+.
+\end{description}
+
+Dans ce fichier de configuration, les lignes commençant par le caractère \verb+%+ sont considérée comme commentaire et ne sont pas prises en compte à l'exécution.
+
+\subsection{catalogue.txt}
+
+\subsection{Exemple de configuration}
+\begin{verbatim}
+% Port du serveur HTTP :
+httpport=8080
+
+% Liste des vidéos :
+video=id:1 name:video1 type:BMP port:1234 protocol:TCP_PULL ips:12
+video=id:2 name:video1 type:BMP port:1235 protocol:UDP_PULL ips:12
+video=id:3 name:dany type:JPEG port:4321 protocol:TCP_PUSH ips:24
+video=id:4 name:remi type:JPEG port:5321 protocol:UDP_PUSH ips:24
+video=id:5 name:remi type:JPEG port:2001 protocol:MCAST_PUSH ips:24 address=224.100.100.100
+\end{verbatim}
+Dans cette configuration, les échanges http se feront par le port 8080. Ce serveur est susceptible de diffuser 5 vidéos, chacune selon un protocole différent. Dans le cas du multicast, la vidéo sera diffusée à l'adresse \verb+224.100.100.100.+.
+
+
+
+
+\section{Architecture}
+
+\end{document}
