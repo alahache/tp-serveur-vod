@@ -49,7 +49,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	DataTransfert(Stream& _stream)
+	DataTransfert(Stream* _stream)
 		: stream(_stream), currentImage(0) {};
 	// Mode d'emploi :
 	// 	<_stream>			: référence vers le flux associé au transfert
@@ -67,7 +67,7 @@ protected:
 	virtual void data_disconnect() = 0;
     
 //----------------------------------------------------- Attributs protégés
-	Stream& stream;				// Flux associé au transfert
+	Stream* stream;				// Flux associé au transfert
 	int currentImage;			// Image courante à envoyer
 
 };

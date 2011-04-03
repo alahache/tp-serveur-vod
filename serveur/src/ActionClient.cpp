@@ -110,31 +110,25 @@ void ActionClient::Execute(epoll_event event)
 					{
 						// On va créer le pipe de communication avec le thread :
 						int pipefds[2];
-						//int flags = 0;
-						//if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
-						//	flags = flags | O_NONBLOCK;
-						//pipe2(pipefds, flags);
 						pipe(pipefds);
-						//if(stream->GetProtocol() == UDP_PUSH || stream->GetProtocol() == TCP_PUSH)
-						//	setNonBlocking(pipefds[1]);
 						client->pipefd = pipefds[1];
 					
 						// On va créer le transfert :
 						if(stream->GetProtocol() == TCP_PUSH)
 						{
-							client->transfert = new DataTransfertTCPPush(*stream, client->clientAddress, client->clientPort, pipefds[0]);
+							client->transfert = new DataTransfertTCPPush(stream, client->clientAddress, client->clientPort, pipefds[0]);
 						}
 						else if(stream->GetProtocol() == TCP_PULL)
 						{
-							client->transfert = new DataTransfertTCPPull(*stream, client->clientAddress, client->clientPort, pipefds[0]);
+							client->transfert = new DataTransfertTCPPull(stream, client->clientAddress, client->clientPort, pipefds[0]);
 						}
 						else if(stream->GetProtocol() == UDP_PUSH)
 						{
-							client->transfert = new DataTransfertUDPPush(*stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
+							client->transfert = new DataTransfertUDPPush(stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
 						}
 						else if(stream->GetProtocol() == UDP_PULL)
 						{
-							client->transfert = new DataTransfertUDPPull(*stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
+							client->transfert = new DataTransfertUDPPull(stream, client->clientAddress, client->clientPort, client->fragmentSize, pipefds[0]);
 						}
 						
 						// On va enfin créer un nouveau thread qui partira de ce transfert :
@@ -163,6 +157,7 @@ void ActionClient::Execute(epoll_event event)
 						{
 							cerr << "Erreur : pthread_join" << endl;
 						}
+						close(client->pipefd);
 						Disconnect(client_addr);
 					}
 					

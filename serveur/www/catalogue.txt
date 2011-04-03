@@ -2,7 +2,8 @@ ServerAddress: 127.0.0.1
 ServerPort: 8080
 Object ID=1 name=video1 type=BMP address=127.0.0.1 port=1234 protocol=TCP_PULL ips=12
 Object ID=2 name=video2 type=BMP address=127.0.0.1 port=1235 protocol=UDP_PULL ips=12
-Object ID=3 name=video3 type=BMP address=127.0.0.1 port=4321 protocol=TCP_PUSH ips=12
+Object ID=3 name=dany type=JPEG address=127.0.0.1 port=4321 protocol=TCP_PUSH ips=24
 Object ID=4 name=remi type=JPEG address=127.0.0.1 port=5321 protocol=UDP_PUSH ips=24
+Object ID=5 name=remi2 type=JPEG address=224.100.100.100 port=2001 protocol=MCAST_PUSH ips=24
 
 

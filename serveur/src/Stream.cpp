@@ -13,16 +13,16 @@
 using namespace std;
 #include <iostream>
 #include <cstdlib>			// exit
-#include <sys/types.h>		// Pour plus de compatibilité
-#include <sys/socket.h>		// Sockets
 #include <sys/epoll.h>		// Gestion de multiples descripteurs (socket)
-#include <arpa/inet.h>		// inet_ntoa
-#include <sstream>			// string stream
+#include <sstream>			// stringstream
+#include <unistd.h>			// pipe
+#include <fcntl.h>			// manipulation de descripteurs
 
 //------------------------------------------------------ Include personnel
 #include "Stream.h"
 #include "ActionConnection.h"
 #include "ActionClient.h"
+#include "DataTransfertMCASTPush.h"
 
 //----------------------------------------------------------------- PUBLIC
 
@@ -65,32 +65,43 @@ string Stream::GetImagePath(int i)
 void Stream::Close()
 {
 	// MCAST_PUSH :
-	if(protocol == MCAST_PUSH) return;
-	
-	io.RemoveAction(s);
-	close(s);
+	if(protocol == MCAST_PUSH)
+	{
+		string pipecmd = "END";
+		write(pipefd, pipecmd.c_str(), pipecmd.size()+1);
+		int err = pthread_join(transfertThread, NULL);
+		if(err)
+		{
+			cerr << "Erreur : pthread_join" << endl;
+		}
+	}
+	else
+	{
+		io.RemoveAction(s);
+		close(s);
+	}
 }
 
 //-------------------------------------------- Constructeurs - destructeur
 
-Stream::Stream(IOControl& _io, int _port, Protocol _protocol, string _name, VideoType _type, float _fps)
-	: io(_io), port(_port), protocol(_protocol), name(_name), type(_type), fps(_fps)
+Stream::Stream(IOControl& _io, in_addr _address, int _port, Protocol _protocol, string _name, VideoType _type, float _fps)
+	: io(_io), address(_address), port(_port), protocol(_protocol), name(_name), type(_type), fps(_fps)
 {
 
 	if(protocol == UDP_PULL || protocol == UDP_PUSH)
 		connectUDP();
 	else if(protocol == TCP_PULL || protocol == TCP_PUSH)
 		connectTCP();
+	else if(protocol == MCAST_PUSH)
+		connectMCAST();
 
 }
 
 
 Stream::~Stream()
 {
-	// MCAST_PUSH :
-	if(protocol == MCAST_PUSH) return;
-	
-	delete connection;
+	if(protocol == MCAST_PUSH) delete transfert;
+	else delete connection;
 }
 
 
@@ -115,8 +126,8 @@ void Stream::connectUDP()
 	// On attache le port à la socket :
 	struct sockaddr_in addr;
 		addr.sin_family = AF_INET;
-		addr.sin_addr.s_addr = htonl(INADDR_ANY);		// htonl : convertit un long vers le format réseau
-		addr.sin_port = htons(port);					// htons : convertit un short vers le format réseau
+		addr.sin_addr = address;			// htonl : convertit un long vers le format réseau
+		addr.sin_port = htons(port);		// htons : convertit un short vers le format réseau
 		
 	if(bind(s, (sockaddr *) &addr, sizeof(addr)) == -1)
 	{
@@ -148,8 +159,8 @@ void Stream::connectTCP()
 	// On attache le port à la socket :
 	struct sockaddr_in addr;
 		addr.sin_family = AF_INET;
-		addr.sin_addr.s_addr = htonl(INADDR_ANY);		// htonl : convertit un long vers le format réseau
-		addr.sin_port = htons(port);					// htons : convertit un short vers le format réseau
+		addr.sin_addr = address;			// htonl : convertit un long vers le format réseau
+		addr.sin_port = htons(port);		// htons : convertit un short vers le format réseau
 		
 	if(bind(s, (struct sockaddr *) &addr, sizeof(addr)) == -1)
 	{
@@ -170,3 +181,27 @@ void Stream::connectTCP()
 	// On ajoute la socket et l'action au gestionnaire d'e/s :
 	io.AddAction(s, connection, EPOLLIN);
 }
+
+void Stream::connectMCAST()
+{
+	// On va créer le pipe de communication avec le thread :
+	int pipefds[2];
+	pipe(pipefds);
+	pipefd = pipefds[1];
+	
+	// On va mettre le pipe de lecture en non bloquant :
+	int flags = fcntl(pipefds[0], F_GETFL, 0);
+	fcntl(pipefds[0], F_SETFL, flags | O_NONBLOCK);
+	
+	// On va créer le transfert :
+	transfert = new DataTransfertMCASTPush(this, address, port, MCAST_FRAGMENTSIZE, pipefds[0]);
+	
+	// On va enfin créer un nouveau thread qui partira de ce transfert :
+	int err = pthread_create(&transfertThread, NULL, transfert->BeginThread, transfert);
+	if(err)
+	{
+		cerr << "Erreur : pthread_create" << endl;
+		exit(EXIT_FAILURE);
+	}
+}
+

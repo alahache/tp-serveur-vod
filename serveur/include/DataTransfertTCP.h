@@ -39,7 +39,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	DataTransfertTCP(Stream& _stream, in_addr _clientAddress, int _clientPort)
+	DataTransfertTCP(Stream* _stream, in_addr _clientAddress, int _clientPort)
     	: DataTransfert(_stream), clientAddress(_clientAddress), clientPort(_clientPort) {};
 	// Mode d'emploi :
 	// 	<_stream>			: référence vers le flux associé au client

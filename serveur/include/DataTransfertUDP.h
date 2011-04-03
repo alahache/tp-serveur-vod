@@ -16,10 +16,6 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 
-//------------------------------------------------------------- Constantes 
-
-//------------------------------------------------------------------ Types 
-
 //------------------------------------------------------------------------ 
 // Rôle de la classe <DataTransfertUDP>
 //	- Implémentation de DataTransfert pour UDP
@@ -38,7 +34,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	DataTransfertUDP(Stream& _stream, in_addr _clientAddress, int _clientPort, unsigned int _fragmentSize)
+	DataTransfertUDP(Stream* _stream, in_addr _clientAddress, int _clientPort, unsigned int _fragmentSize)
     	: DataTransfert(_stream), clientAddress(_clientAddress), clientPort(_clientPort), fragmentSize(_fragmentSize) {}
     // Mode d'emploi :
 	// 	<_stream>			: référence vers le flux associé au transfert
@@ -64,8 +60,6 @@ protected:
 	unsigned int fragmentSize;			// Taille des fragments de données
 
 };
-
-//--------------------------- Autres définitions dépendantes de <DataTransfertUDP>
 
 #endif // DATATRANSFERTUDP_H
 

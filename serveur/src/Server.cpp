@@ -12,14 +12,14 @@
 //-------------------------------------------------------- Include système
 using namespace std;
 #include <iostream>
-#include <sys/epoll.h>		// epoll
 #include <fstream>			// ifstream
 #include <sstream>			// stringstream
 #include <cstdlib>			// exit
+#include <sys/epoll.h>		// Gestion de multiples descripteurs (socket)
 #include <sys/types.h>		// Pour plus de compatibilité
 #include <sys/socket.h>		// Sockets
-#include <sys/epoll.h>		// Gestion de multiples descripteurs (socket)
 #include <arpa/inet.h>		// inet_ntoa
+#include <netinet/in.h>
 
 //------------------------------------------------------ Include personnel
 #include "Server.h"
@@ -120,6 +120,8 @@ void Server::loadConfig()
 			string name;
 			VideoType type;
 			float ips;
+			in_addr address;
+				address.s_addr = htonl(INADDR_ANY);
 			
 			string prop;
 			while(ss >> prop)
@@ -137,6 +139,8 @@ void Server::loadConfig()
 					else if(propval == "JPEG") type = JPEG;
 					else type = BMP;
 				}
+				else if(propname == "address")
+					inet_aton(propval.c_str(), &address);
 				else if(propname == "port")
 					port = atoi(propval.c_str());
 				else if(propname == "protocol")
@@ -149,12 +153,10 @@ void Server::loadConfig()
 					else protocol = TCP_PULL;
 				}
 				else if(propname == "ips")
-				{
 					ips = atof(propval.c_str());
-				}
 			}
 			
-			Stream* stream = new Stream(io, port, protocol, name, type, ips);
+			Stream* stream = new Stream(io, address, port, protocol, name, type, ips);
 			catalogue.push_back(stream);
 			
 			prop.clear();

@@ -11,12 +11,19 @@
 
 //--------------------------------------------------- Interfaces utilisées
 #include <string>
+#include <pthread.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #include "IOControl.h"
 #include "Action.h"
+class DataTransfert;
 
 //------------------------------------------------------------- Constantes
 const std::string STREAM_DIRECTORY = "videos/";
 const int NBMAX_CLIENTS = 100;
+const unsigned int MCAST_FRAGMENTSIZE = 512;
 
 //------------------------------------------------------------------ Types 
 enum VideoType { BMP, JPEG };
@@ -28,9 +35,9 @@ enum Protocol { TCP_PULL, TCP_PUSH, UDP_PULL, UDP_PUSH, MCAST_PUSH };
 //	  rattaché à un seul port dans le serveur, il permet de décrire une
 //	  vidéo et les méthodes permettant d'y accéder pour y récupérer les
 //	  images.
-//	- Un flux est également rattaché à une connexion TCP/IP gérée par le
-//	  gestionnaire d'e/s IOControl. Les actions ActionConnection et
-//	  ActionClient utilisent ce flux.
+//	- Un flux est éventuellement rattaché à une connexion de contrôle 
+//	  gérée par le gestionnaire d'e/s IOControl. Les actions
+//	  ActionConnection et ActionClient utilisent ce flux.
 //------------------------------------------------------------------------ 
 
 class Stream
@@ -60,17 +67,27 @@ public:
 	
 	void Close();
 	// Mode d'emploi :
-	//	- Arrête un flux: ferme la socket, supprime également l'action
-	//	  du gestionnaire d'e/s
+	//	- Permet d'arrêter un flux
 
 //-------------------------------------------- Constructeurs - destructeur
 
-	Stream(IOControl& _io, int _port, Protocol _protocol, std::string _name, VideoType _type, float _fps);
+	Stream(IOControl& _io, in_addr _address, int _port, Protocol _protocol, std::string _name, VideoType _type, float _fps);
 	// Mode d'emploi :
+	//	<_io>		: gestionnaire d'entrée/sortie
+	//	<_address>	: adresse de connexion du client
+	//	<_port>		: port de connexion du client
+	//	<_protocol>	: protocole géré par le flux
+	//	<_name>		: nom de la vidéo
+	//	<_type>		: type des images envoyées
+	//	<_fps>		: nombre d'images par seconde
+	//
 	//	- Construit un nouveau flux
-	//	- Ouvre une nouvelle connexion de contrôle TCP/IP
+	//	Dans le cas d'un flux UDP / TCP :
+	//	- Ouvre une nouvelle connexion de contrôle
 	//	- Ajoute une action pour gérer les connexions des clients
 	//	  au gestionnaire d'e/s
+	//	Dans le cas d'un flux MCAST :
+	//	- Lance directement le Transfert des données et son thread
 
 	virtual ~Stream();
 	// Mode d'emploi :
@@ -82,14 +99,21 @@ protected:
 //----------------------------------------------------- Méthodes protégées
 	void connectUDP();
 	void connectTCP();
+	void connectMCAST();
 
 //----------------------------------------------------- Attributs protégés
-	// Paramètres du serveur :
+	// Connection de contrôle :
 	IOControl& io;					// Gestionnaire d'e/s
 	int s;							// Socket de connexion des clients
 	Action* connection;				// Action de connexion des clients
 	
+	// Transfert MCAST :
+	DataTransfert *transfert;		// Transfert du flux MCAST_PUSH
+	pthread_t transfertThread;		// Thread utilisé lors de MCAST_PUSH
+	int pipefd;						// Canal de communication avec MCAST_PUSH
+	
 	// Paramètres de la vidéo :
+	in_addr address;				// adresse du flux
 	int port;						// port utilisé par le flux
 	Protocol protocol;				// Protocole utilisé pour les échanges
 	std::string name;				// Nom de la vidéo

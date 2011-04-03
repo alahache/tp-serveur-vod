@@ -45,6 +45,8 @@ void* DataTransfertTCPPull::Begin()
         }
     }
     data_disconnect();
+    
+    close(pipefd);
     return 0;
 }
 

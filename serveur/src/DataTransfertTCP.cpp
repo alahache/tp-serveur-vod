@@ -52,15 +52,15 @@ void DataTransfertTCP::data_connect()
 void DataTransfertTCP::data_send(int id)
 {
 	// Ouverture de l'image
-	ifstream fs(stream.GetImagePath(id).c_str());
+	ifstream fs(stream->GetImagePath(id).c_str());
 	if(fs.fail())
 	{
 		currentImage = 0;
         id = 0;
-        fs.open(stream.GetImagePath(id).c_str());
+        fs.open(stream->GetImagePath(id).c_str());
         if (fs.fail())
         {
-            cerr << "La vidéo " << stream.GetImagePath(id).c_str() << " est introuvable." << endl;
+            cerr << "La vidéo " << stream->GetImagePath(id).c_str() << " est introuvable." << endl;
             exit(EXIT_FAILURE);
         }
 	}

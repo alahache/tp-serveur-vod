@@ -35,7 +35,7 @@ public:
 
 //-------------------------------------------- Constructeurs - destructeur
 
-    DataTransfertUDPPull(Stream& _stream, in_addr _clientAddress, int _clientPort, unsigned int _fragmentSize, int _pipefd)
+    DataTransfertUDPPull(Stream* _stream, in_addr _clientAddress, int _clientPort, unsigned int _fragmentSize, int _pipefd)
     	: DataTransfertUDP(_stream, _clientAddress, _clientPort, _fragmentSize), pipefd(_pipefd) {}
 	// Mode d'emploi :
 	// 	<_stream>			: référence vers le flux associé au transfert

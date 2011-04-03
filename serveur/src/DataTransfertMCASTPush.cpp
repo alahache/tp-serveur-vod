@@ -1,11 +1,11 @@
 /*************************************************************************
-                           DataTransfertTCPPush  -  description
+                           DataTransfertMCASTPush  -  description
                              -------------------
     début                : ...
     copyright            : (C) 2011 par Arnaud Lahache
 *************************************************************************/
 
-//---------- Réalisation de la classe <DataTransfertTCPPush> (fichier DataTransfertTCPPush.cpp) -------
+//---------- Réalisation de la classe <DataTransfertMCASTPush> (fichier DataTransfertMCASTPush.cpp) -------
 
 //---------------------------------------------------------------- INCLUDE
 
@@ -17,29 +17,26 @@ using namespace std;
 #include <sys/types.h>
 #include <errno.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 //------------------------------------------------------ Include personnel
-#include "DataTransfertTCPPush.h"
-
-//------------------------------------------------------------- Constantes
-
-//----------------------------------------------------------------- PUBLIC
+#include "DataTransfertMCASTPush.h"
 
 //----------------------------------------------------- Méthodes publiques
 
-void* DataTransfertTCPPush::Begin()
+void* DataTransfertMCASTPush::Begin()
 {
 	// On calcule l'intervale en secondes entre 2 images  :
-	unsigned int interval = 1000000/stream->GetFps();
+	long interval = 1000000/stream->GetFps();
 	long sleeping_time;
 	timeval timestamp_before, timestamp_after;
 	char msg[PIPE_SIZE];
 	string cmd;
 
 	data_connect();
+	unsigned char ttl = 1;
+    setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl));
+	
 	bool end	= false;
-	bool pause	= false;
 	while (!end)
 	{
 		// On va lire un message dans le pipe :
@@ -58,19 +55,9 @@ void* DataTransfertTCPPush::Begin()
 			{
 				end = true;
 			}
-			else if(cmd == "PAUSE")
-			{
-				setBlocking(pipefd);
-				pause = true;
-			}
-			else if(cmd == "START")
-			{
-				setNonBlocking(pipefd);
-				pause = false;
-			}
 		}
 		
-		if(pause == true || end == true) continue;
+		if(end == true) continue;
 		
 		// On prends le timestamp avant l'envoi :
 		gettimeofday(&timestamp_before, NULL);
@@ -94,18 +81,3 @@ void* DataTransfertTCPPush::Begin()
 	return 0;
 }
 
-//------------------------------------------------------------------ PRIVE
-
-//----------------------------------------------------- Méthodes protégées
-
-void DataTransfertTCPPush::setNonBlocking(int fd)
-{
-	int flags = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-}
-
-void DataTransfertTCPPush::setBlocking(int fd)
-{
-	int flags = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
-}
