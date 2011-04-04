@@ -19,12 +19,18 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	// TODO : 	récupérer éventuellement arguments
-	//			pour spécifier le fichier de
-	//			configuration.
-
-	// On lance simplement le serveur :
-	Server server;
+	char* pathConf;
+	if(argc > 1)
+	{
+		// On lance le serveur avec un fichier de conf :
+		pathConf = argv[1];
+		Server server(pathConf);
+	}
+	else
+	{
+		// On lance simplement le serveur :
+		Server server;
+	}
 	
 	return 0;
 }

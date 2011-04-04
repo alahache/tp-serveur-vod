@@ -89,6 +89,13 @@ void Server::loadConfig()
 	string line;
 	ifstream file(pathConf.c_str());
 	
+	// On vérifie que le fichier existe :
+	if(file.fail())
+	{
+		cerr << "Erreur : Fichier " << pathConf << " inexistant." << endl;
+		exit(EXIT_FAILURE);
+	}
+	
 	// On récupère le contenu du fichier de conf ligne par ligne :
 	while(!file.eof())
 	{
